@@ -12,3 +12,9 @@ xvlog --sv TB\tb_ifmap_buf.sv
 xelab -debug all -top tb_ifmap_buf -snapshot tb_ifmap_buf_snapshot
 xsim tb_ifmap_buf_snapshot -tclbatch xsim_cfg.tcl
 xsim --gui tb_ifmap_buf_snapshot.wdb
+
+
+xvlog --sv TB\tb_fc_contoller.sv
+xelab -debug all -top tb_fc_contoller -snapshot tb_fc_contoller_snapshot
+xsim tb_fc_contoller_snapshot -tclbatch xsim_cfg.tcl
+xsim --gui tb_fc_contoller_snapshot.wdb
