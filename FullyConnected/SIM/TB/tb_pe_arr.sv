@@ -12,6 +12,10 @@ module tb_pe_arr();
     byte ifmap_data [128];
     byte ifmap_captured [128];
 
+    byte weight_data [128];
+    byte caputured_psum;
+    int psum_result=0;
+
     int pass = 1;
 
     initial begin
@@ -41,8 +45,15 @@ module tb_pe_arr();
         repeat (3) @(posedge clk);          
         rst_n = 1'b1;
 
+        pe_if.init();
+
         for(int i = 0; i<128; i++) begin
-            ifmap_data[i] = $urandom_range(255,0)-128;
+            ifmap_data[i] = $urandom_range(6,0)-3; //-3 ~ 3
+            weight_data [i] = $urandom_range(6,0)-3; //-3 ~ 3
+        end
+
+        for(int i = 0; i<128; i++) begin
+           psum_result = psum_result + (ifmap_data[i]*weight_data[127-i]);
         end
     endtask
 
@@ -71,16 +82,22 @@ module tb_pe_arr();
             end
         end
     endtask
+
+    task mac_operation_test();
+        $display("start mac_operation_test");
+        for(int i=0; i<128; i++) begin
+            pe_if.weight_i[i] = weight_data[i];
+            @(posedge clk);
+        end 
+        #1
+        caputured_psum = pe_if.psum_o;
+        $display("answer: %d, captured: %d", psum_result, caputured_psum);
+    endtask
     
     initial begin
         test_init();
         load_ifmap();
-        load_ifmap_test();
-
-        if(pass == 1)
-            $display("pass");
-        else
-            $display("not passed");
+        mac_operation_test();
 
         $finish;
     end
