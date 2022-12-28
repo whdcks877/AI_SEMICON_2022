@@ -53,6 +53,7 @@ module fc_weight_buf(
                 .we(wren_i),
                 .rst_n(rst_all && rst_n),
                 .addr(ptr[0]),
+                
                 .di(weight_i[0]),
                 .dout(weight_o[0])
             );
