@@ -15,6 +15,9 @@ module fc_controller(
     output wire [6:0] wbuf_rdptr_o,
     output wire rst_buf_n_o,
 
+    //interface with pe array
+    output wire pe_load_o,
+
     //interface with activation
     output wire valid_o,
     output wire last_o
@@ -39,6 +42,8 @@ module fc_controller(
 
     reg [6:0] in_node_num, in_node_num_n;
     reg [6:0] out_node_num, out_node_num_n;
+
+    reg pe_load;
 
 
     always_ff @(posedge clk) begin
@@ -81,6 +86,7 @@ module fc_controller(
             last_n = 1'b0;
             in_node_num_n = in_node_num;
             out_node_num_n = out_node_num;
+            pe_load = 1'b0;
 
         case(state)
             S_IDLE: begin
@@ -95,17 +101,21 @@ module fc_controller(
                 end
             end
             S_IF_LOAD: begin
-                ifmap_rden_n = 1'b1;
+                pe_load = 1'b1;
 
                 if(cnt == in_node_num) begin
                     state_n = S_FC_OP;
-
-                    ifmap_rden_n = 1'b0; //stop reading ifmap buffer
-                    wbuf_rden_n = 1'b1; //start reading weight buffer
                     cnt_n = 8'b0; //reset cnt
+                    wbuf_rden_n = 1'b1; //start reading weight buffer
                 end else begin
                     cnt_n = cnt + 1;
                     ifmap_rdptr_n = cnt_n[6:0];
+                end
+
+                if(cnt >= in_node_num-1) begin
+                    ifmap_rden_n = 1'b0; //stop reading ifmap buffer
+                end else begin
+                    ifmap_rden_n = 1'b1;
                 end
             end
             S_FC_OP: begin
@@ -147,5 +157,6 @@ module fc_controller(
     assign rst_buf_n_o = rst_buf_n;
     assign valid_o = valid;
     assign last_o = last;
- 
+    assign pe_load_o = pe_load;
+
 endmodule
