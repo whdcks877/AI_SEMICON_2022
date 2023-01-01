@@ -3,19 +3,25 @@
 `define FC_SIZE 128
 
 module pe_1x128(
-    input wire clk,
-    input wire rst_n,
+    input wire          clk,
+    input wire          rst_n,
 
-    input wire [7:0] weight_i [`FC_SIZE],
-    input wire pe_load_i,
-    input wire [7:0] ifmap_i,
+    input wire [7:0]    weight_i [`FC_SIZE],
+    input wire          pe_load_i,
+    input wire [7:0]    ifmap_i,
 
-    output wire [7:0] psum_o,
-    output wire [7:0] ifmap_o
+    output wire [7:0]   psum_o,
+    output wire [7:0]   ifmap_o
 );
     
     wire [7:0] psum [`FC_SIZE+1];
     wire [7:0] ifmap [`FC_SIZE+1];
+
+    reg pe_load_d;
+
+    always_ff @(posedge clk) begin
+        pe_load_d <= pe_load_i;
+    end
 
     assign psum[0] = 8'b0;
     assign ifmap[0] = ifmap_i;
@@ -28,7 +34,7 @@ module pe_1x128(
             pe u_pe (
                 .clk(clk),
                 .rst_n(rst_n),
-                .pe_load(pe_load_i),
+                .pe_load(pe_load_d),
                 .psum_i(psum[i]),
                 .weight_i(weight_i[i]),
                 .ifmap_i(ifmap[i]),
