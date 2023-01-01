@@ -4,40 +4,40 @@
 `include "pe_1x128.sv"
 
 module FullyConnected (
-    input wire clk,
-    input wire rst_n,
+    input wire          clk,
+    input wire          rst_n,
 
-    input wire start_i, //input after buffers are filled, FC operate start
-    input wire [6:0] in_node_num_i, //number of input node, 1~128
-    input wire [6:0] out_node_num_i, //number of output node, 1~84
+    input wire          start_i, //input after buffers are filled, FC operate start
+    input wire [6:0]    in_node_num_i, //number of input node, 1~128
+    input wire [6:0]    out_node_num_i, //number of output node, 1~84
 
     //write port  for weight buffer
-    input wire wbuf_wren_i,
-    input wire [6:0] wbuf_wrptr_i [128],
-    input wire [7:0] wbuf_wdata_i [128],
+    input wire          wbuf_wren_i,
+    input wire [6:0]    wbuf_wrptr_i [128],
+    input wire [7:0]    wbuf_wdata_i [128],
 
     //write port for ifmap buffer
-    input wire ifmap_wren_i,
-    input wire [6:0] ifmap_wrptr_i,
-    input wire [7:0] ifmap_wdata_i,
+    input wire          ifmap_wren_i,
+    input wire [6:0]    ifmap_wrptr_i,
+    input wire [7:0]    ifmap_wdata_i,
 
     //interface with activation
-    output wire [7:0] psum_o, //output node
-    output wire valid_o, //output node data is valiad
-    output wire last_o  //last data of output node
+    output wire [7:0]   psum_o, //output node
+    output wire         valid_o, //output node data is valiad
+    output wire         last_o  //last data of output node
 
 );
-    wire ifmap_rden;
-    wire [6:0] ifmap_rdptr;
+    wire        ifmap_rden;
+    wire [6:0]  ifmap_rdptr;
 
-    wire wbuf_rden;
-    wire [6:0] wbuf_rdptr;
-    wire rst_buf_n;
+    wire        wbuf_rden;
+    wire [6:0]  wbuf_rdptr;
+    wire        rst_buf_n;
 
-    wire [7:0] weight [128];
-    wire [7:0] ifmap;
+    wire [7:0]  weight [128];
+    wire [7:0]  ifmap;
 
-    wire pe_load;
+    wire        pe_load;
 
     fc_controller u_ctrl(
         .clk(clk),
