@@ -48,7 +48,7 @@ module tb_fc_contoller();
     task test_init();
         rst_n = 1'b0; 
         repeat (3) @(posedge clk);   
-        rst_n = 1'b1;
+        rst_n = 1'b1; 
     endtask
 
     task ctrl_test();

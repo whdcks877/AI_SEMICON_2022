@@ -51,7 +51,6 @@ module tb_fc_weight_buf();
             addr = '{default: i};
             buf_if.write_ram(addr, '{default:i+1});
         end
-        
     endtask
 
     task read_buf();

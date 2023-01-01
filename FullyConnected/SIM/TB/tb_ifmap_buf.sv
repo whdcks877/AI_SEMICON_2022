@@ -1,19 +1,15 @@
 `timescale 1ns/1ps
 `include "..\RTL\ifmap_buf.sv"
+`include "fc_ifmap_buf_if.sv"
 `define     TIMEOUT_CYCLE         10000000
 
 module tb_ifmap_buf();
 
     reg clk;
     reg rst_n;
-    logic rden_i;
-    logic wren_i;
-    logic [6:0] addr_i;
+ 
+ 
 
-    logic [7:0] ifmap_i;
-    logic [7:0] ifmap_o;
-
-    logic [6:0] addr;
     byte captured_data;
 
     initial begin
@@ -26,14 +22,17 @@ module tb_ifmap_buf();
         forever #10 clk         = !clk;
     end
 
+    fc_ifmap_buf_if ifbuf_if(.clk(clk), .rst_n(rst_n));
+
     ifmap_buf u_dut(
         .clk(clk),
-        .rst_n(rst_n),
-        .rden_i(rden_i),
-        .wren_i(wren_i),
-        .addr_i(addr_i),
-        .ifmap_i(ifmap_i),
-        .ifmap_o(ifmap_o)
+        .rst_n(ifbuf_if.rst_n),
+        .rden_i(ifbuf_if.rden_i),
+        .wren_i(ifbuf_if.wren_i),
+        .rdptr_i(ifbuf_if.rdptr_i),
+        .wrptr_i(ifbuf_if.wrptr_i),
+        .ifmap_i(ifbuf_if.ifmap_i),
+        .ifmap_o(ifbuf_if.ifmap_o)
     );
 
     task test_init();
@@ -41,32 +40,25 @@ module tb_ifmap_buf();
         repeat (3) @(posedge clk);   
         rst_n = 1'b1;
 
-        rden_i = 0;
-        wren_i = 0;
-        addr_i = 0;
-        ifmap_i = 0;
-
+        ifbuf_if.init();
     endtask
 
-    task write_buf();
-        wren_i = 1;
+    task  write_buf();
         for(int i =0; i<128; i++) begin
-            addr_i = i;
-            ifmap_i = i+1;
-            @(posedge clk);
+            ifbuf_if.write_ram(i,i+1);
         end
-        wren_i = 0;
     endtask
 
     task read_buf();
-        rden_i = 1;
+         ifbuf_if.rden_i = 1;
         for(int i =0; i<128; i++) begin
-            addr_i = i;
+             ifbuf_if.rdptr_i = i;
             @(posedge clk);
-            captured_data = ifmap_o;
+            #1
+            captured_data =  ifbuf_if.ifmap_o;
             $display("%d:: captured: %d",i, captured_data);
         end
-        rden_i = 1;
+         ifbuf_if.rden_i = 1;
     endtask
 
     initial begin
@@ -75,6 +67,7 @@ module tb_ifmap_buf();
         write_buf();
         repeat (3) @(posedge clk);  
         read_buf();
+        repeat (3) @(posedge clk); 
 
         $finish;
     end
