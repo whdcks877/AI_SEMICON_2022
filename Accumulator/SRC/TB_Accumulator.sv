@@ -51,7 +51,7 @@ module TB_Accumulator();
         acc_if.init(`OFMAP_SIZE-1,`CH_SIZE-1);
         for(int i = 0; i<`CH_SIZE; i=i+1) begin
             for(int j = 0; j<`OFMAP_SIZE; j=j+1) begin
-                psum_arr[i][j] = $urandom_range(255,0)-128;
+                psum_arr[i][j] = $urandom_range(255,0)-128; //ramdomize input data
             end
         end
         
