@@ -14,11 +14,12 @@ interface ACC_IF (
 
     logic conv_valid;
     logic [7:0] conv_result;
+    logic last;
     
     modport TB (
         input           clk, rst_n,
         input           psum, pvalid, ofmap_size, ifmap_ch,
-        output          conv_valid, conv_result, pready
+        output          conv_valid, conv_result, pready, last
     );
 
     task init(input int ofmap_size_data, input int ifmap_ch_data);

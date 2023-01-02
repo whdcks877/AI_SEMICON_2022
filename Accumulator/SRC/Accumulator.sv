@@ -1,42 +1,42 @@
 `include "simple_dual_one_clock.sv"
 
-module Accmulator(
+module Accumulator(
     input wire clk,
     input wire rst_n,
 
-    //PE와 통신하는 포트
-    input wire [7:0] psum_i, //한 colum에서 나온 결과
-    input wire pvaild_i, //pvalid가 1일때 psum_i가 유효
-    output wire pready_o, //acc가 데이터를 출력 중일때는 pready가 0
+    //interface with one colum of systolic array
+    input wire [7:0] psum_i, //output of last row of pe
+    input wire pvaild_i, 
+    output wire pready_o, 
 
-    input wire [9:0] ofmap_size, // convoultion 결과물의 사이즈
-    input wire [5:0] ifmap_ch, // 입력과 커널의 채널 사이즈
+    input wire [9:0] ofmap_size,
+    input wire [5:0] ifmap_ch,
 
-    output wire conv_valid_o, //accumulate가 완료 되고 결과값이 출력 됨을 알리는 신호
-    output wire [7:0] conv_result_o //accumulate 결과값
+    //interface with activation
+    output wire conv_valid_o, 
+    output wire last_o,
+    output wire [7:0] conv_result_o
 );
 
     localparam  S_INIT  = 2'd0,
                 S_ACC   = 2'd1,
                 S_OUT   = 2'd2;
 
-    //
-
     wire [31:0] acc_ram_o;
-    wire first;
 
     reg [1:0]   state, state_n;
-    reg [9:0]   ps_cnt, ps_cnt_n; 
-    reg [5:0]   ch_cnt, ch_cnt_n;
-    reg [9:0]   rdptr, rdptr_n, wrptr, wrptr_n;
+    reg [9:0]   ps_cnt, ps_cnt_n; //counter for partial sum
+    reg [5:0]   ch_cnt, ch_cnt_n; //counter for channel
+    reg [9:0]   rdptr, rdptr_n, wrptr, wrptr_n; 
  
     reg [31:0]  adder_i;
     reg [31:0]  adder_o;
-    reg [31:0]  sign_extended;
-    reg rden_acc, wren_acc;
-    reg pready;
-    reg conv_valid;
+    reg [31:0]  sign_extended; //8bit input -> 32bit
+    reg         rden_acc, wren_acc;
+    reg         pready;
+    reg         conv_valid;
     reg [7:0]   truncated_data;
+    reg         last;
 
     always_ff @(posedge clk) begin
         if(!rst_n) begin
@@ -68,18 +68,21 @@ module Accmulator(
         
         pready = 1'b0;
         conv_valid = 1'b0;
+        last = 1'b0;
         
         case(state)
             S_INIT: begin
                 state_n = S_ACC;
-                rden_acc = 1'b1;
-                rdptr_n  = rdptr + 1;
+                rdptr_n  = rdptr + 1; //make rdptr == wrptr+1
             end
             S_ACC: begin
                 pready = 1'b1;
+
                 if(pvaild_i) begin
+                    //read sram and write back after addition
                     rden_acc = 1'b1;
                     wren_acc = 1'b1;
+
                     if(ps_cnt == ofmap_size) begin
                         ps_cnt_n = 'b0;
                         if(ch_cnt == ifmap_ch) begin
@@ -92,17 +95,23 @@ module Accmulator(
                         ps_cnt_n = ps_cnt + 1;
                     end
 
-                    if(rdptr == ofmap_size )
+                    if(rdptr == ofmap_size)
                         rdptr_n = 'b0;
                     else
                         rdptr_n = rdptr + 1;
                 end
             end
             S_OUT: begin
+                //output result from sram
                 conv_valid = 1'b1;
                 rden_acc = 1'b1;
-                if(rdptr == ofmap_size) begin
+                if(rdptr == ofmap_size+1) begin
+                    rden_acc = 1'b0;
                     state_n = S_INIT;
+                    last = 1'b1;
+
+                    rdptr_n = 'b0;
+                    ch_cnt_n = 'b0;
                 end else begin
                     rdptr_n = rdptr + 1;
                 end
@@ -151,4 +160,5 @@ module Accmulator(
     assign pready_o = pready;
     assign conv_valid_o = conv_valid;
     assign conv_result_o = truncated_data;
+    assign last_o = last;
 endmodule

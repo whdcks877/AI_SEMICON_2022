@@ -1,12 +1,12 @@
-`include "ACC_IF_x128.sv"
-`include "Accumulator_x128.sv"
+`include "ACC_IF_x16.sv"
+`include "Accumulator_x16.sv"
 
-`define     CH_SIZE         3
-`define     OFMAP_SIZE      16
-`define     N_COL           128
+`define     CH_SIZE         16  //setting input channel size
+`define     OFMAP_SIZE      25  //setting ouput feature map size
+`define     N_COL           16
 `define     TIMEOUT_CYCLE         10000000
 
-module TB_Accumulator_x128();
+module TB_Accumulator_x16();
 
     reg                     clk;
     reg                     rst_n;
@@ -25,9 +25,9 @@ module TB_Accumulator_x128();
         forever #10 clk         = !clk;
     end
 
-    ACC_IF_x128 acc_if (.clk(clk), .rst_n(rst_n));
+    ACC_IF_x16 acc_if (.clk(clk), .rst_n(rst_n));
     
-    Accumulator_x128 u_dut(
+    Accumulator_x16 u_dut(
         .clk(clk),
         .rst_n(rst_n),
         .psum_i(acc_if.psum),
@@ -36,6 +36,7 @@ module TB_Accumulator_x128();
         .ofmap_size_i(acc_if.ofmap_size),
         .ifmap_ch_i(acc_if.ifmap_ch),
         .conv_valid_o(acc_if.conv_valid),
+        .conv_last_o(acc_if.conv_last),
         .conv_result_o(acc_if.conv_result)
     );
 
@@ -46,7 +47,7 @@ module TB_Accumulator_x128();
         
         acc_if.init(`OFMAP_SIZE-1,`CH_SIZE-1);
 
-        for(int i = 0; i<128; i=i+1) begin
+        for(int i = 0; i<16; i=i+1) begin
             for(int j = 0; j<`CH_SIZE; j=j+1) begin
                 for(int k = 0; k<`OFMAP_SIZE; k=k+1) begin
                     psum_arr[i][j][k] = $urandom_range(255,0)-128;
@@ -55,7 +56,7 @@ module TB_Accumulator_x128();
         end
         
         //accumulate
-        for(int i = 0; i<128; i=i+1) begin
+        for(int i = 0; i<16; i=i+1) begin
             for(int j = 0; j<`CH_SIZE; j=j+1) begin
                 for(int k = 0; k<`OFMAP_SIZE; k=k+1) begin
                     correct_data[i][k] = correct_data[i][k] + psum_arr[i][j][k];
@@ -64,7 +65,7 @@ module TB_Accumulator_x128();
         end
 
         //saturation
-        for(int i = 0; i<128; i=i+1) begin
+        for(int i = 0; i<16; i=i+1) begin
             for(int j = 0; j<`OFMAP_SIZE; j=j+1) begin
                 if(correct_data[i][j]> 127) begin
                     correct_data[i][j] = 127 ;
@@ -108,6 +109,7 @@ module TB_Accumulator_x128();
          end
         wait fork;
         $display("pass");
+        repeat (3) @(posedge clk); 
         $finish;
     end
 

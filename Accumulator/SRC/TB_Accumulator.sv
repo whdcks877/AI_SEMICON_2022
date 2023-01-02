@@ -2,10 +2,10 @@
 `include "Accumulator.sv"
 
 
-`define     CH_SIZE         16
-`define     OFMAP_SIZE      1024
+`define     CH_SIZE         16      //setting input channel size
+`define     OFMAP_SIZE      784     //setting ouput feature map size
 `define     TIMEOUT_CYCLE         10000000
-module TB_Accmulator();
+module TB_Accumulator();
 
     reg                     clk;
     reg                     rst_n;
@@ -30,7 +30,7 @@ module TB_Accmulator();
 
     ACC_IF acc_if(.clk(clk), .rst_n(rst_n));
     
-    Accmulator u_dut(
+    Accumulator u_dut(
         .clk(clk),
         .rst_n(rst_n),
         .psum_i(acc_if.psum),
@@ -39,10 +39,9 @@ module TB_Accmulator();
         .ofmap_size(acc_if.ofmap_size),
         .ifmap_ch(acc_if.ifmap_ch),
         .conv_valid_o(acc_if.conv_valid),
+        .last_o(acc_if.last),
         .conv_result_o(acc_if.conv_result)
     );
-    int ofmap_size_data = 6**2;
-    int ifmap_ch_data = 3;
 
     task test_init();
         rst_n                   = 1'b0;     // active at time 0
@@ -107,6 +106,7 @@ module TB_Accmulator();
             acc_test_capture();
         join
         $display("pass");
+        repeat (3) @(posedge clk);
         $finish;
     end
 endmodule
