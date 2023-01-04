@@ -40,13 +40,14 @@ module Activation #(
 
      always_comb begin
         state_n = state;
-        act_valid = 1'b0;
-        act_last = 1'b0;
-        //acc_valid = 1'b0;
+        act_valid = 1'b0; 
+        //act_last = 1'b0; The location of this should be discussed later.
 
         case(state)
             S_INIT: begin
                 state_n = S_ACT;
+                //act_valid = 1'b0; The location of this should be discussed later.
+                act_last = 1'b0;
                 act_result = 'b0;
             end
             S_ACT: begin
@@ -64,12 +65,15 @@ module Activation #(
                         state_n = S_INIT;
                     end
                 end
+                else begin
+                    state_n = S_INIT;
+                end
             end
         endcase
     end
 
-    assgin act_last_o       = act_last;
-    assgin act_valid_o      = act_valid;
-    assgin act_result_o     = act_result;
+    assign act_last_o       = act_last;
+    assign act_valid_o      = act_valid;
+    assign act_result_o     = act_result;
 
 endmodule
