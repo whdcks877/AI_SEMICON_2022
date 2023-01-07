@@ -26,7 +26,7 @@ module Accumulator_x16(
     wire        pready [N_COL];
     wire        conv_valid [N_COL];
     wire [7:0]  conv_result [N_COL];
-    wire [9:0]  ofmap_size;
+    wire [4:0]  ofmap_size;
     wire [5:0]  ifmap_ch;
 
     assign ofmap_size = ofmap_size_i;
@@ -41,8 +41,8 @@ module Accumulator_x16(
                 .psum_i(psum[col]),
                 .pvalid_i(pvalid[col]),
                 .pready_o(pready[col]),
-                .ofmap_size(ofmap_size_i),
-                .ifmap_ch(ifmap_ch_i),
+                .ofmap_size_i(ofmap_size_i),
+                .ifmap_ch_i(ifmap_ch_i),
                 .conv_valid_o(conv_valid[col]),
                 .last_o(conv_last_o[col]),
                 .conv_result_o(conv_result[col])

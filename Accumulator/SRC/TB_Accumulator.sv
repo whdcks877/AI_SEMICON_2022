@@ -2,9 +2,9 @@
 `include "Accumulator.sv"
 
 
-`define     CH_SIZE         2      //setting input channel size
-`define     OFMAP_SIZE      2*2     //setting ouput feature map size
-`define     OFMAP_SIZE_SQRT 2
+`define     CH_SIZE         16      //setting input channel size
+`define     OFMAP_SIZE      28*28     //setting ouput feature map size
+`define     OFMAP_SIZE_SQRT 28
 `define     TIMEOUT_CYCLE         10000000
 module TB_Accumulator();
 
@@ -101,6 +101,39 @@ module TB_Accumulator();
         end
     endtask
 
+    task acc_test_capture_pool();
+        byte data;
+        int offset =0 ;
+        byte pool[4];
+
+        pool[0] = correct_data[offset];
+        pool[1] = correct_data[offset + 1];
+        pool[2] = correct_data[offset + `OFMAP_SIZE_SQRT];
+        pool[3] = correct_data[offset + `OFMAP_SIZE_SQRT + 1];
+
+
+        for(int i = 0; i<`OFMAP_SIZE_SQRT; i = i+2) begin
+            for(int j = 0; j<`OFMAP_SIZE_SQRT; j = j+2) begin
+                offset = (i*`OFMAP_SIZE_SQRT) + j;
+
+                pool[0] = correct_data[offset];
+                pool[1] = correct_data[offset + 1];
+                pool[2] = correct_data[offset + `OFMAP_SIZE_SQRT];
+                pool[3] = correct_data[offset + `OFMAP_SIZE_SQRT + 1];
+                
+                $display("%d, %d, %d, %d ",offset,offset + 1,offset + `OFMAP_SIZE_SQRT,offset + `OFMAP_SIZE_SQRT + 1);
+                for(int k = 0; k<4; k++) begin
+                    acc_if.capture_data(data);
+                    $display("captured data = %d, correct data = %d",j,data, pool[k]);
+                    if(data != pool[k]) begin
+                        $display("mismatch!");
+                        $finish;
+                    end
+                end     
+            end
+        end
+    endtask
+
 
     initial begin
         test_init();
@@ -108,7 +141,7 @@ module TB_Accumulator();
 
         fork
             acc_test_feeddata();
-            acc_test_capture();
+            acc_test_capture_pool();
         join
         $display("pass");
         repeat (3) @(posedge clk);
