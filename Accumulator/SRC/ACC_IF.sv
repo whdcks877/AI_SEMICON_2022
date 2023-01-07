@@ -9,7 +9,7 @@ interface ACC_IF (
     logic pvalid;
     logic pready;
 
-    logic [9:0] ofmap_size;
+    logic [4:0] ofmap_size;
     logic [5:0] ifmap_ch;
 
     logic conv_valid;

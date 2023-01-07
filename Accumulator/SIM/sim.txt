@@ -1,0 +1,11 @@
+xvlog --sv ..\SRC\TB_Accumulator.sv
+xelab -debug all -top TB_Accumulator -snapshot TB_Accumulator_snapshot
+xsim TB_Accumulator_snapshot -tclbatch xsim_cfg.tcl
+xsim --gui TB_Accumulator_snapshot.wdb
+
+xvlog --sv ..\SRC\TB_Accumulator_x16.sv
+xelab -debug all -top TB_Accumulator_x16 -snapshot TB_Accumulator_x16_snapshot
+xsim TB_Accumulator_x16_snapshot -tclbatch xsim_cfg.tcl
+xsim --gui TB_Accumulator_x16_snapshot.wdb
+
+rm -rf *.jou *.log *.pb *.wdb xsim.dir

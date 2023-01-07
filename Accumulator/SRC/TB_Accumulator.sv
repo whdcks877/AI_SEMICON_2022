@@ -2,8 +2,9 @@
 `include "Accumulator.sv"
 
 
-`define     CH_SIZE         16      //setting input channel size
-`define     OFMAP_SIZE      784     //setting ouput feature map size
+`define     CH_SIZE         2      //setting input channel size
+`define     OFMAP_SIZE      2*2     //setting ouput feature map size
+`define     OFMAP_SIZE_SQRT 2
 `define     TIMEOUT_CYCLE         10000000
 module TB_Accumulator();
 
@@ -34,10 +35,10 @@ module TB_Accumulator();
         .clk(clk),
         .rst_n(rst_n),
         .psum_i(acc_if.psum),
-        .pvaild_i(acc_if.pvalid),
+        .pvalid_i(acc_if.pvalid),
         .pready_o(acc_if.pready),
-        .ofmap_size(acc_if.ofmap_size),
-        .ifmap_ch(acc_if.ifmap_ch),
+        .ofmap_size_i(acc_if.ofmap_size),
+        .ifmap_ch_i(acc_if.ifmap_ch),
         .conv_valid_o(acc_if.conv_valid),
         .last_o(acc_if.last),
         .conv_result_o(acc_if.conv_result)
@@ -48,7 +49,7 @@ module TB_Accumulator();
         repeat (3) @(posedge clk);          // after 3 cycles,
         rst_n                   = 1'b1;     // release the reset
         
-        acc_if.init(`OFMAP_SIZE-1,`CH_SIZE-1);
+        acc_if.init(`OFMAP_SIZE_SQRT,`CH_SIZE);
         for(int i = 0; i<`CH_SIZE; i=i+1) begin
             for(int j = 0; j<`OFMAP_SIZE; j=j+1) begin
                 psum_arr[i][j] = $urandom_range(255,0)-128; //ramdomize input data
@@ -81,6 +82,9 @@ module TB_Accumulator();
                  @(posedge clk);
                 $display("feed data : %d to %d,%d",psum_arr[i][j],i,j);
             end
+            acc_if.pvalid = 1'b0;
+            repeat (4) @(posedge clk);
+            acc_if.pvalid = 1'b1;
         end
         acc_if.pvalid = 1'b0;
     endtask
@@ -92,7 +96,7 @@ module TB_Accumulator();
             $display("%d : captured data = %d, correct data = %d",j,data, correct_data[j]);
             if(data != correct_data[j]) begin
                 $display("mismatch!");
-                $finish;
+                //$finish;
             end
         end
     endtask
@@ -100,6 +104,7 @@ module TB_Accumulator();
 
     initial begin
         test_init();
+        repeat (1) @(posedge clk);
 
         fork
             acc_test_feeddata();

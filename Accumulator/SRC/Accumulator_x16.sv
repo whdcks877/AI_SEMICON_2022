@@ -10,7 +10,7 @@ module Accumulator_x16(
     output          pready_o [16],
 
     //interface with controller
-    input [9:0]     ofmap_size_i, //size of output feature map
+    input [4:0]     ofmap_size_i, //size of output feature map, actual size of result is ofmap_size^2
     input [5:0]     ifmap_ch_i, //size of input feature map or input image
 
     //interface with activation
@@ -39,7 +39,7 @@ module Accumulator_x16(
                 .clk(clk),
                 .rst_n(rst_n),
                 .psum_i(psum[col]),
-                .pvaild_i(pvalid[col]),
+                .pvalid_i(pvalid[col]),
                 .pready_o(pready[col]),
                 .ofmap_size(ofmap_size_i),
                 .ifmap_ch(ifmap_ch_i),
