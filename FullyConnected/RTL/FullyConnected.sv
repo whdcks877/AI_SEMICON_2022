@@ -1,7 +1,7 @@
 `include "fc_controller.sv"
 `include "FC_weight_buf.sv"
 `include "ifmap_buf.sv"
-`include "pe_1x128.sv"
+`include "pe_1x120.sv"
 
 module FullyConnected (
     input wire          clk,
@@ -13,8 +13,8 @@ module FullyConnected (
 
     //write port  for weight buffer
     input wire          wbuf_wren_i,
-    input wire [6:0]    wbuf_wrptr_i [128],
-    input wire [7:0]    wbuf_wdata_i [128],
+    input wire [6:0]    wbuf_wrptr_i [`FC_SIZE],
+    input wire [7:0]    wbuf_wdata_i [`FC_SIZE],
 
     //write port for ifmap buffer
     input wire          ifmap_wren_i,
@@ -34,7 +34,7 @@ module FullyConnected (
     wire [6:0]  wbuf_rdptr;
     wire        rst_buf_n;
 
-    wire [7:0]  weight [128];
+    wire [7:0]  weight [`FC_SIZE];
     wire [7:0]  ifmap;
 
     wire        pe_load;
@@ -78,7 +78,7 @@ module FullyConnected (
         .ifmap_o(ifmap)
     );
 
-    pe_1x128 u_pe_arr(
+    pe_1x120 u_pe_arr(
         .clk(clk),
         .rst_n(rst_n),
         .weight_i(weight),

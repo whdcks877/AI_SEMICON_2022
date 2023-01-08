@@ -118,7 +118,7 @@ module fc_controller(
                 wbuf_rden_n = 1'b1;
 
                 //start output output node
-                if(cnt >= 128) begin
+                if(cnt >= 120) begin
                     valid_n = 1'b1;
                 end
 
@@ -128,7 +128,7 @@ module fc_controller(
                 end
 
                 //make last signal for last output node
-                if(cnt == (127 + {3'b0,out_node_num})) begin
+                if(cnt == (119 + {3'b0,out_node_num})) begin
                     last_n = 1'b1;
                 end
 

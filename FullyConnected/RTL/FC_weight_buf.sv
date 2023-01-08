@@ -6,21 +6,21 @@ module fc_weight_buf(
     input wire rst_all,
 
     input wire [6:0] rdptr_i,
-    input wire [6:0] wrptr_i [128],
+    input wire [6:0] wrptr_i [120],
     input wire rden_i,
     input wire wren_i,
-    input wire [7:0] weight_i [128],
-    output wire [7:0] weight_o [128]
+    input wire [7:0] weight_i [120],
+    output wire [7:0] weight_o [120]
 );
 
-    reg [6:0] ptr [128];
-    reg [6:0] rdptr_reg [127]; 
-    reg rden_reg [127];
-    reg rst_n_reg [127];
+    reg [6:0] ptr [120];
+    reg [6:0] rdptr_reg [119]; 
+    reg rden_reg [119];
+    reg rst_n_reg [119];
 
     always_ff @(posedge clk) begin
         if(!rst_all) begin
-            for(int i = 0; i<127; i++) begin
+            for(int i = 0; i<119; i++) begin
                 rdptr_reg[i] <= 'b0;
                 rden_reg[i] <= 'b0;
                 rst_n_reg[i] <= 'b1;
@@ -30,7 +30,7 @@ module fc_weight_buf(
             rden_reg[0] <= rden_i;
             rst_n_reg[0] <= rst_n;
     
-            for(int i = 1; i<127; i++) begin
+            for(int i = 1; i<119; i++) begin
                 rdptr_reg[i] <= rdptr_reg[i-1];
                 rden_reg[i] <= rden_reg[i-1];
                 rst_n_reg[i] <= rst_n_reg[i-1];
@@ -41,7 +41,7 @@ module fc_weight_buf(
     always_comb begin
         if(rden_i) begin
             ptr[0] = rdptr_i;
-            ptr[1:127] = rdptr_reg[0:126];
+            ptr[1:119] = rdptr_reg[0:118];
         end else begin
             ptr = wrptr_i;
         end
@@ -60,7 +60,7 @@ module fc_weight_buf(
 
     genvar i;
     generate
-        for(i=1; i<128; i++) begin
+        for(i=1; i<120; i++) begin
             rams_sp_rf_rst #(.SRAM_DEPTH(84), .DATA_WIDTH(8)) u_buf(
                 .clk(clk),
                 .en(rden_reg[i-1]),

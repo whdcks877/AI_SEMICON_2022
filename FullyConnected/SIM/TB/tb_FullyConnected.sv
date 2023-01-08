@@ -14,8 +14,8 @@ module tb_FullyConnected();
     logic [6:0] out_node_num_i; 
 
     
-    logic [7:0] wbuf_wdata [128];
-    logic [6:0] addr [128];
+    logic [7:0] wbuf_wdata [`FC_SIZE];
+    logic [6:0] addr [`FC_SIZE];
 
     logic [6:0] ifmap_wrptr;
 
@@ -26,10 +26,10 @@ module tb_FullyConnected();
     int in_node_num = 120; //setting number of input node
     int out_node_num = 84; //setting number of output node
 
-    byte input_node [128] = '{default:0};
-    byte output_node [128];
-    byte weight [128][128]= '{default:0};
-    byte output_node_ans [128] = '{default:0};
+    byte input_node [`FC_SIZE] = '{default:0};
+    byte output_node [`FC_SIZE];
+    byte weight [`FC_SIZE][`FC_SIZE]= '{default:0};
+    byte output_node_ans [`FC_SIZE] = '{default:0};
     
     initial begin
 	    #`TIMEOUT_CYCLE $display("Timeout!");
