@@ -16,7 +16,8 @@ module Accumulator_x16(
     //interface with activation
     output wire         conv_valid_o [16],
     output wire         conv_last_o [16],
-    output wire [7:0]   conv_result_o [16] //final accumulation result 
+    output wire [7:0]   conv_result_o [16], //final accumulation result 
+    output wire [9:0]   addr_o  [16] //index of output result
 );
 
     localparam N_COL = 16; //setting number of systolic array row
@@ -28,6 +29,7 @@ module Accumulator_x16(
     wire [7:0]  conv_result [N_COL];
     wire [4:0]  ofmap_size;
     wire [5:0]  ifmap_ch;
+    wire [9:0]  addr [N_COL];
 
     assign ofmap_size = ofmap_size_i;
     assign ifmap_ch = ifmap_ch_i;
@@ -45,7 +47,8 @@ module Accumulator_x16(
                 .ifmap_ch_i(ifmap_ch_i),
                 .conv_valid_o(conv_valid[col]),
                 .last_o(conv_last_o[col]),
-                .conv_result_o(conv_result[col])
+                .conv_result_o(conv_result[col]),
+                .addr_o(addr[col])
             );
         end
     endgenerate
@@ -55,4 +58,5 @@ module Accumulator_x16(
     assign pready_o = pready;
     assign conv_valid_o = conv_valid;
     assign conv_result_o = conv_result;
+    assign addr_o = addr;
 endmodule

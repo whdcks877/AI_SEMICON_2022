@@ -41,7 +41,8 @@ module TB_Accumulator();
         .ifmap_ch_i(acc_if.ifmap_ch),
         .conv_valid_o(acc_if.conv_valid),
         .last_o(acc_if.last),
-        .conv_result_o(acc_if.conv_result)
+        .conv_result_o(acc_if.conv_result),
+        .addr_o(acc_if.addr)
     );
 
     task test_init();
@@ -124,7 +125,7 @@ module TB_Accumulator();
                 $display("%d, %d, %d, %d ",offset,offset + 1,offset + `OFMAP_SIZE_SQRT,offset + `OFMAP_SIZE_SQRT + 1);
                 for(int k = 0; k<4; k++) begin
                     acc_if.capture_data(data);
-                    $display("captured data = %d, correct data = %d",j,data, pool[k]);
+                    $display("captured addr = %d, captured data = %d, correct data = %d",acc_if.addr, data, pool[k]);
                     if(data != pool[k]) begin
                         $display("mismatch!");
                         $finish;

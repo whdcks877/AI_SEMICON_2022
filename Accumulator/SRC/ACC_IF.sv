@@ -14,6 +14,7 @@ interface ACC_IF (
 
     logic conv_valid;
     logic [7:0] conv_result;
+    logic [9:0] addr;
     logic last;
     
     modport TB (

@@ -15,7 +15,8 @@ module Accumulator(
     //interface with activation
     output wire conv_valid_o, 
     output wire last_o,
-    output wire [7:0] conv_result_o
+    output wire [7:0] conv_result_o,
+    output wire [9:0] addr_o
 );
 
     localparam  S_INIT  = 'd0,
@@ -46,6 +47,7 @@ module Accumulator(
     reg [7:0]   truncated_data;
     reg         last;
     reg         pvalid_d;
+    reg [9:0]   addr_d;
 
     assign pool1 = pool_offset; 
     assign pool2 = pool1 + 1;
@@ -78,6 +80,14 @@ module Accumulator(
             ch_cnt_d <= ch_cnt;
             pvalid_d <= pvalid_i;
         end
+    end
+
+    //for one clk delay to rdptr
+    always_ff @(posedge clk) begin
+        if(!rst_n)
+            addr_d <=  'b0;
+        else
+            addr_d <= rdptr;
     end
 
     always_comb begin
@@ -259,4 +269,5 @@ module Accumulator(
     assign conv_valid_o = conv_valid;
     assign conv_result_o = truncated_data;
     assign last_o = last;
+    assign addr_o = addr_d;
 endmodule
