@@ -20,10 +20,11 @@ module Pooling #(
 );
 
     localparam  S_INIT         = 3'd0,
-                S_POOL         = 3'd1,
+                S_POOL1        = 3'd1,
                 S_POOL2        = 3'd2,
                 S_POOL3        = 3'd3,
-                S_POOL4        = 3'd4;
+                S_POOL4        = 3'd4,
+                S_POOL         = 3'd5;
 
     reg                         pool_valid;
     reg                         pool_last;
@@ -45,28 +46,51 @@ module Pooling #(
      always_comb begin
         state_n = state;
         pool_valid = 1'b0;
+        pool_last = 1'b0;
     
         case(state)
             S_INIT: begin
                 state_n = S_POOL;
                 pool_result = 'b0;
                 pool_result_address = 'b0;
-                pool_last = 1'b0;
                 a1 = 'd0;
                 a2 = 'd0;
             end
             S_POOL: begin
                 if(act_valid_i) begin
                     if (!act_last_i) begin
-                        a1 = act_result_i;
-                        a2 = act_result_address_i;
-                        state_n = S_POOL2;
+                        if (act_result_i > a1) begin
+                            a1 = act_result_i;
+                            a2 = act_result_address_i;
                         end
+                        state_n = S_POOL2;
+                    end
                     else begin
                         pool_last = 1'b1;
                         state_n = S_INIT;
                     end
                     pool_valid = 1'b0;
+                end
+                else state_n = S_INIT;
+            end
+            S_POOL1: begin
+                if(act_valid_i) begin
+                    if (!act_last_i) begin
+                        if (act_result_i > a1) begin
+                            a1 = act_result_i;
+                            a2 = act_result_address_i;
+                        end
+                        state_n = S_POOL2;
+                    end
+                    else begin
+                        pool_last = 1'b1;
+                        state_n = S_INIT;
+                    end
+                    pool_result = a1;
+                    pool_result_address = a2;
+                    pool_valid = 1'b1;
+                    a1 = 'd0;
+                    a2 = 'd0;
                 end
                 else state_n = S_INIT;
             end
@@ -111,15 +135,13 @@ module Pooling #(
                             a1 = act_result_i;
                             a2 = act_result_address_i;
                         end
-                        pool_result = a1;
-                        pool_result_address = a2;
-                        state_n = S_POOL; 
+                        state_n = S_POOL1; 
                     end
                     else begin
                         pool_last = 1'b1;
                         state_n = S_INIT;
                     end
-                    pool_valid = 1'b1;
+                    pool_valid = 1'b0;
                 end
                 else state_n = S_INIT;
             end
