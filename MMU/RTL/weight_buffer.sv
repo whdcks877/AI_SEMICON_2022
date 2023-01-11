@@ -1,6 +1,6 @@
 // Weight Buffer 
 // JY Lee
-// Version 2023-01-08
+// Version 2023-01-10 1st verified
 
 module weight_buffer
 (
@@ -33,14 +33,32 @@ module weight_buffer
     always_ff @(posedge clk) begin
         if(!rst_n) begin
             state <= S_IDLE;
-            w_data_o <= 'd0;
+            w_data_o[0] <= 'd0;
+            w_data_o[1] <= 'd0;
+            w_data_o[2] <= 'd0;
+            w_data_o[3] <= 'd0;
+            w_data_o[4] <= 'd0;
+            w_data_o[5] <= 'd0;
+            w_data_o[6] <= 'd0;
+            w_data_o[7] <= 'd0;
+            w_data_o[8] <= 'd0;
+            w_data_o[9] <= 'd0;
+            w_data_o[10] <= 'd0;
+            w_data_o[11] <= 'd0;
+            w_data_o[12] <= 'd0;
+            w_data_o[13] <= 'd0;
+            w_data_o[14] <= 'd0;
+            w_data_o[15] <= 'd0;
+
             cnt <= 'd0;
         end
-        state <= state_n;
-        w_data_o <= w_data_i;       //1clk BRAM RL
-        w_enable <= w_enable_n;
-        w_addr <= w_addr_n;
-        cnt <= cnt_n;
+        else begin
+            state <= state_n;
+            w_data_o <= w_data_i;       //1clk BRAM RL
+            w_enable <= w_enable_n;
+            w_addr <= w_addr_n;
+            cnt <= cnt_n;
+        end
     end
 
     always_comb begin
@@ -51,7 +69,23 @@ module weight_buffer
 
         case(state)
             S_IDLE: begin
-                w_enable_n = 'd0;
+                w_enable_n[0] = 'd0;
+                w_enable_n[1] = 'd0;
+                w_enable_n[2] = 'd0;
+                w_enable_n[3] = 'd0;
+                w_enable_n[4] = 'd0;
+                w_enable_n[5] = 'd0;
+                w_enable_n[6] = 'd0;
+                w_enable_n[7] = 'd0;
+                w_enable_n[8] = 'd0;
+                w_enable_n[9] = 'd0;
+                w_enable_n[10] = 'd0;
+                w_enable_n[11] = 'd0;
+                w_enable_n[12] = 'd0;
+                w_enable_n[13] = 'd0;
+                w_enable_n[14] = 'd0;
+                w_enable_n[15] = 'd0;
+
                 if( weight_start ) begin
                     state_n = nth_conv_i ? S_2nd_Conv : S_1th_Conv;
                     cnt_n = 'd0;

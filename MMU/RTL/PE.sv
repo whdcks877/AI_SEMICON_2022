@@ -1,6 +1,6 @@
 // Processing Element
 // JY Lee
-// Version 2023-01-08
+// Version 2023-01-10 1st verified
 
 module PE
 (
@@ -41,7 +41,7 @@ module PE
             sum_tmp = 8'b0;
             data_tmp = 8'b0;
         end
-        sum_tmp = weight_i * data_i + sum_i;
+        sum_tmp = weight_o * data_i + sum_i;
         data_tmp = data_i;
     end
 endmodule
