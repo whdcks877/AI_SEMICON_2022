@@ -1,3 +1,6 @@
+//version 2022-01-13
+//editor IM SUHYEOK
+
 module Pooling_x16 #(
     parameter       POOL_NUM            = 16,
     parameter       DATA_WIDTH          = 8,
@@ -25,7 +28,6 @@ module Pooling_x16 #(
     wire                        pool_valid [POOL_NUM];
     wire                        [DATA_WIDTH-1:0] pool_result [POOL_NUM];
     wire                        [ADDRESS_WIDTH-1:0] pool_result_address [POOL_NUM];
-    wire
     
    genvar index;
     generate
@@ -48,7 +50,7 @@ module Pooling_x16 #(
     assign act_last                         = act_last_i;
     assign act_valid                        = act_valid_i;
     assign act_result                       = act_result_i;
-    assign act_result_address               = act_result_address_i
+    assign act_result_address               = act_result_address_i;
     assign pool_last_o                      = pool_last;
     assign pool_valid_o                     = pool_valid;
     assign pool_result_o                    = pool_result;
