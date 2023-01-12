@@ -44,9 +44,9 @@ module Activation_fc_tb;
 
 	initial
 	begin
-		
-		#20 RST = 1'b1; acc_valid = 1'b1;
-		#20 acc_result = 8'b00000001;
+		#100
+		#20 RST = 1'b1;
+		#20 acc_valid = 1'b1; acc_result = 8'b00000001;
 		#20 acc_result = 8'b00000010;
 		#20 acc_result = 8'b00000011;
 		#20 acc_result = 8'b00000100;
