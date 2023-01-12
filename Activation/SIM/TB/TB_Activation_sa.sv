@@ -49,8 +49,8 @@ module Activation_sa_tb;
 	initial
 	begin
 		
-		#20 RST = 1'b1; acc_valid = 1'b1;
-		#20 acc_result = 8'b00000001; acc_result_address = 10'b0000000001;
+		#20 RST = 1'b1; 
+		#20 acc_valid = 1'b1; acc_result = 8'b00000001; acc_result_address = 10'b0000000001;
 		#20 acc_result = 8'b00000010; acc_result_address = 10'b0000000010;
 		#20 acc_result = 8'b00000011; acc_result_address = 10'b0000000011;
 		#20 acc_result = 8'b00000100; acc_result_address = 10'b0000000100;
@@ -74,9 +74,9 @@ module Activation_sa_tb;
 		
 		// calculate again
 
-		#20 acc_valid = 1'b1;
+		#200 
 		
-		#20 acc_result = 8'b00000001;  acc_result_address = 10'b0000000001;
+		#20 acc_valid = 1'b1; acc_result = 8'b00000001;  acc_result_address = 10'b0000000001;
 		#20 acc_result = 8'b00000010;  acc_result_address = 10'b0000000010;
 		#20 acc_result = 8'b00000011;  acc_result_address = 10'b0000000011;
 		#20 acc_result = 8'b00000100;  acc_result_address = 10'b0000000100;
@@ -93,8 +93,8 @@ module Activation_sa_tb;
 
 		#20 acc_result = 8'b10001101;  acc_result_address = 10'b0000001101;
 		#20 acc_result = 8'b10001110;  acc_result_address = 10'b0000001110;
-		#20 acc_result = 8'b10001111;  acc_result_address = 10'b0000001111;
-		#20 acc_result = 8'b10010000;  acc_result_address = 10'b0000010000; acc_last = 1'b1;
+		#20 acc_result = 8'b00001111;  acc_result_address = 10'b0000001111;
+		#20 acc_result = 8'b00010000;  acc_result_address = 10'b0000010000; acc_last = 1'b1;
 
 		#20 acc_last = 1'b0; acc_valid = 1'b0;
 	end

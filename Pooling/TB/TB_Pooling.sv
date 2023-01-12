@@ -49,9 +49,8 @@ module Pooling_tb;
 	initial
 	begin
 		
-		#20 RST = 1'b1; act_valid = 1'b1;
-		#10;
-		#20 act_result = 8'b00000001; act_result_address = 10'b0000000001;
+		#20 RST = 1'b1;
+		#30 act_valid = 1'b1; act_result = 8'b00000001; act_result_address = 10'b0000000001;
 		#20 act_result = 8'b00000010; act_result_address = 10'b0000000010;
 		#20 act_result = 8'b00000100; act_result_address = 10'b0000000011;
 		#20 act_result = 8'b00000011; act_result_address = 10'b0000000100;
@@ -69,13 +68,15 @@ module Pooling_tb;
 		#20 act_result = 8'b00001101; act_result_address = 10'b0000001101;
 		#20 act_result = 8'b00001110; act_result_address = 10'b0000001110;
 		#20 act_result = 8'b00001111; act_result_address = 10'b0000001111;
-		#20 act_result = 8'b00010000; act_result_address = 10'b0000010000; 
+		#20 act_result = 8'b00010000; act_result_address = 10'b0000010000;  act_last = 1'b1;
+		#20 act_last = 1'b0; act_valid = 1'b0;
 		
-		#20 act_last = 1'b1;
+		#200
+		
 
 		// calculate again
 		
-		#20 act_result = 8'b00000001; act_result_address = 10'b0000000001; act_last = 1'b0;
+		#20 act_result = 8'b00000001; act_result_address = 10'b0000000001; act_valid = 1'b1;
 		
 		#20 act_result = 8'b00000010; act_result_address = 10'b0000000010;
 		#20 act_result = 8'b00000011; act_result_address = 10'b0000000011;

@@ -18,18 +18,13 @@ module Activation_fc #(
 );
 
     reg                         [DATA_WIDTH-1:0] act_result;
-    reg                         state, state_n;
-
-
 
      always_comb begin
         if(acc_valid_i) begin
-            if (!acc_last_i) begin
-                if(!acc_result_i[DATA_WIDTH-1]) begin
-                    act_result = acc_result_i;
-                end else begin
-                    act_result = 'b0;
-                end
+            if(!acc_result_i[DATA_WIDTH-1]) begin
+                act_result = acc_result_i;
+            end else begin
+                act_result = 'b0;
             end
         end
         else begin

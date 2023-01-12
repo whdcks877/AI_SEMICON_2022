@@ -66,11 +66,13 @@ module Activation_fc_tb;
 		#20 acc_result = 8'b10001111;
 		#20 acc_result = 8'b10010000; acc_last = 1'b1;
 
-        #20 acc_last = 1'b0;
+        #20 acc_last = 1'b0; acc_valid = 1'b0;
+        
+        #200
 		
 		// calculate again
 		
-		#20 acc_result = 8'b00000001;
+		#20 acc_valid = 1'b1; acc_result = 8'b00000001;
 		#20 acc_result = 8'b00000010;
 		#20 acc_result = 8'b00000011;
 		#20 acc_result = 8'b00000100;
@@ -87,8 +89,10 @@ module Activation_fc_tb;
 
 		#20 acc_result = 8'b10001101;
 		#20 acc_result = 8'b10001110;
-		#20 acc_result = 8'b10001111;
-		#20 acc_result = 8'b10010000; 
+		#20 acc_result = 8'b00001111;
+		#20 acc_result = 8'b00010000; acc_last = 1'b1;
+		#20 acc_last = 1'b0; acc_valid = 1'b0;
+
 	end
 
 	

@@ -25,17 +25,12 @@ module Activation_sa #(
 
     always_comb begin
         if(acc_valid_i) begin
-            if (!acc_last_i) begin
-                act_result_address = acc_result_address_i;
-                if(!acc_result_i[DATA_WIDTH-1]) begin
-                    act_result = acc_result_i;
-                end else begin
-                    act_result = 'b0;
-                end
-            end
-        else begin
-            act_result = 'b0;
-            act_result_address = 'b0;
+            act_result_address = acc_result_address_i;
+            if(!acc_result_i[DATA_WIDTH-1]) begin
+                act_result = acc_result_i;
+            end else begin
+                act_result = 'b0;
+                act_result_address = 'b0;
             end
         end
     end
