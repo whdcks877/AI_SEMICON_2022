@@ -11,20 +11,17 @@ module Activation_sa #(
     
     input   wire                acc_last_i, 
     input   wire                acc_valid_i,
-    //output  wire                act_ready_o,  not yet used
     input   wire                [DATA_WIDTH-1:0] acc_result_i,
     input   wire                [ADDRESS_WIDTH-1:0] acc_result_address_i,
 
     output                      act_last_o, 
     output                      act_valid_o,
-    //input   wire                pool_ready_i, not yet used
     output                      [DATA_WIDTH-1:0] act_result_o,
     output                      [ADDRESS_WIDTH-1:0] act_result_address_o
 );
     localparam  S_INIT  = 1'd0,
                 S_ACT   = 1'd1;
 
-    //reg                         acc_valid;
     reg                         act_valid;
     reg                         act_last;
     reg                         [DATA_WIDTH-1:0] act_result;
@@ -34,9 +31,6 @@ module Activation_sa #(
     always_ff @(posedge clk) begin
         if(!rst) begin    
             state <= S_INIT;
-            //act_valid <= 1'b0;
-            //act_last <= 1'b0;
-            //act_result <= 'b0;
         end else begin
             state <= state_n;
         end
@@ -46,15 +40,16 @@ module Activation_sa #(
      always_comb begin
         state_n = state;
         act_valid = 1'b0; 
-        //act_last = 1'b0; The location of this should be discussed later.
+        act_last = 1'b0;
 
         case(state)
             S_INIT: begin
                 if(acc_valid_i) begin 
                     state_n = S_ACT;
+                    if (acc_last_i) begin
+                        act_last = 1'b1;
+                    end
                 end
-                //act_valid = 1'b0; The location of this should be discussed later.
-                act_last = 1'b0;
                 act_result = 'b0;
                 act_result_address = 'b0;
             end
