@@ -1,12 +1,3 @@
-// Input Data Buff Unit
-// 1 write port, multi read ports
-// dual write-read
-
-// Authors:
-// - Sangmin Park
-// v1.1
-// Version Updated:
-// - 20220106
 
 module BUFF_INPUT #
 (
