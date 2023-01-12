@@ -26,7 +26,7 @@ module DATAINPUT_TOP #
     input   wire        [10:0]              BURST_SIZE,
     input   wire                            weight_ready_i,
     output  wire                            data_valid_o[BAND_WIDTH],   // SETUP >> SA valid
-    output  wire        [DATA_WIDTH-1:0]    sa_data_o[BAND_WIDTH-1:0],      // SETUP >> SA data
+    output  wire        [DATA_WIDTH-1:0]    sa_data_o[BAND_WIDTH],      // SETUP >> SA data
     output  wire                            burst_last_o    
 );
 
