@@ -1,4 +1,5 @@
-//version 2022-12-29
+//version 2022-01-12
+//editor IM SUHYEOK
 
 module Pooling #(
     parameter       DATA_WIDTH          = 8,
@@ -50,11 +51,16 @@ module Pooling #(
     
         case(state)
             S_INIT: begin
-                state_n = S_POOL;
-                pool_result = 'b0;
-                pool_result_address = 'b0;
-                a1 = 'd0;
-                a2 = 'd0;
+                if(act_valid_i) begin
+                    state_n = S_POOL;
+                    pool_result = 'b0;
+                    pool_result_address = 'b0;
+                    a1 = 'd0;
+                    a2 = 'd0;
+                    if(act_last_i) begin
+                        pool_last = 1'b1;
+                    end
+                end
             end
             S_POOL: begin
                 if(act_valid_i) begin
