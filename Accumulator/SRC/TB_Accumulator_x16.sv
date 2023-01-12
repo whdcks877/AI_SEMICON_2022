@@ -76,7 +76,7 @@ module TB_Accumulator_x16();
         end
     endtask
 
-     task automatic acc_test_feeddata(input int col);
+    task automatic acc_test_feeddata(input int col);
         for(int i = 0; i<`CH_SIZE; i=i+1) begin
             for(int j = 0; j<`OFMAP_SIZE; j=j+1) begin
                 acc_if.data_feed(col, psum_arr[col][i][j]);

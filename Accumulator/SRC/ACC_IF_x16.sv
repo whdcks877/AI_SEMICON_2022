@@ -9,17 +9,18 @@ interface ACC_IF_x16 (
     logic pvalid [16];
     logic pready [16];
 
-    logic [9:0] ofmap_size;
+    logic [4:0] ofmap_size;
     logic [5:0] ifmap_ch;
 
     logic conv_valid [16];
     logic conv_last[16];
     logic [7:0] conv_result [16];
+    logic [9:0] addr [16];
     
     modport TB (
         input           clk, rst_n,
         input           psum, pvalid, ofmap_size, ifmap_ch,
-        output          conv_valid, conv_result, pready
+        output          conv_valid, conv_result, pready, addr
     );
 
     task init(input int ofmap_size_data, input int ifmap_ch_data);
