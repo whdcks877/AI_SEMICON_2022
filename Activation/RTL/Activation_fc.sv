@@ -1,4 +1,4 @@
-//version 2022-12-29
+//version 2022-01-12
 //editor IM SUHYEOK
 
 module Activation_fc #(
@@ -46,7 +46,9 @@ module Activation_fc #(
 
         case(state)
             S_INIT: begin
-                state_n = S_ACT;
+                if(acc_valid_i) begin
+                    state_n = S_ACT;
+                end
                 //act_valid = 1'b0; The location of this should be discussed later.
                 act_last = 1'b0;
                 act_result = 'b0;
