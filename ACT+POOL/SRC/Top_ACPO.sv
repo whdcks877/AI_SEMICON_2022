@@ -19,7 +19,7 @@ module Top_ACPO #(
 
     output                      act_last_o,
     output                      act_valid_o,
-    output                      act_result_o,
+    output                      [DATA_WIDTH-1:0] act_result_o,
 
     output                      pool_last_o [POOL_NUM],
     output                      pool_valid_o [POOL_NUM],
