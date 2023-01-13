@@ -2,7 +2,7 @@
 // include BUFF_INPUT.sv, DATA_SETUP.sv
 
 // Authors:
-// - Sangmin Park(reviced by JY Lee)
+// - Sangmin Park
 // v1.2
 // Version Updated:
 // - 20220112
