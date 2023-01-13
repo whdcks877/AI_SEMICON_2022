@@ -26,7 +26,7 @@ module SA
     output  reg                 accu_valid[15:0]
 );
     reg     [7:0]      zero = 'd0;
-    wire    [7:0]      data_o[24:0][14:0];
+    wire    [7:0]      data_o[24:0][15:0];
     wire    [7:0]      sum_o[24:0][15:0];
     reg     [7:0]      weight_o[24:0][15:0];
     reg     [4:0]      cnt,     cnt_n;

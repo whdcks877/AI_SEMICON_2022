@@ -2,14 +2,14 @@
 // include BUFF_INPUT.sv, DATA_SETUP.sv
 
 // Authors:
-// - Sangmin Park(reviced by JY Lee)
-// v1.2
+// - Sangmin Park
+// v2.1
 // Version Updated:
-// - 20220113(roll back)
+// - 20220114
 
 module DATAINPUT_TOP #
 (
-    parameter SRAM_DEPTH=1024,
+    parameter SRAM_DEPTH=1176,
     parameter BAND_WIDTH=25,
     parameter DATA_WIDTH=8
 )
@@ -24,6 +24,7 @@ module DATAINPUT_TOP #
 
     //DATA Setup
     input   wire        [10:0]              BURST_SIZE,
+    input   wire        [4:0]               ofmap_size_i,
     input   wire                            weight_ready_i,
     output  wire                            data_valid_o[BAND_WIDTH],   // SETUP >> SA valid
     output  wire        [DATA_WIDTH-1:0]    sa_data_o[BAND_WIDTH],      // SETUP >> SA data
@@ -35,7 +36,11 @@ module DATAINPUT_TOP #
     wire            [$clog2(SRAM_DEPTH)-1:0] addrb[BAND_WIDTH];
 
 
-    BUFF_INPUT u_buff(
+    BUFF_INPUT #
+    (
+        .SRAM_DEPTH(SRAM_DEPTH)
+    )
+    u_buff(
         .clk                        (clk),
         .wea                        (wea),
         .enb                        (enb),
@@ -46,10 +51,15 @@ module DATAINPUT_TOP #
     );
 
 
-    DATA_SETUP u_setup(
+    DATA_SETUP #
+    (
+        .SRAM_DEPTH(SRAM_DEPTH)
+    )
+    u_setup(
         .clk                        (clk),
         .rst                        (rst),
         .BURST_SIZE                 (BURST_SIZE),
+        .ofmap_size_i               (ofmap_size_i),
         .buff_data_i                (dob),
         .setup_ready_o              (enb),
         .buff_addr_o                (addrb),

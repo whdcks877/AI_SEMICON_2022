@@ -1,8 +1,8 @@
 // SA_TOP
-// JY Lee
+// JY Lee, SM Park
 // Version 2023-01-10 1st verified
 // 2023-01-12 2nd verified
-// 2023-01-13 3rd verified by JY Lee
+// 2023-01-14 4th verified
 
 module SA_TOP
 (
@@ -11,24 +11,12 @@ module SA_TOP
     //config
     input   wire            start,
     input   wire    [1:0]   nth_conv_i,
-
-    //datasetup(tmp)
-    // input   wire            data_last,
-    // output  reg             data_enable_o,
-    // input   wire    [7:0]   data_i[24:0],
-    // input   wire            dvalid_i,
-    // input   wire            burst_last_i,
-
-    // //BRAM_Weight buffer interface
-    // output  reg             w_enable[15:0],
-    // output  reg     [5:0]   w_addr[15:0],
-    // input   wire    [7:0]   w_data_i[15:0],
+    input   wire    [4:0]   ofmap_size_i,
 
     //weight_bram write
     input   wire            wea,
     input   wire    [16:0]  addra,
     input   wire    [7:0]   dia,
-
 
     //ACC interface
     output  reg     [7:0]   accu_data_o[15:0],
@@ -53,34 +41,23 @@ module SA_TOP
     always_comb begin
         if(!rst_n) begin
             BURST_SIZE      = 'd0;
-            // data_enable_o   = 'b0;
-            // nth_conv_o      = 'd0;
-            // weight_start_o  = 'b0;
-            // weight_stop_o   = 'b0;
-            // for (int i=0; i<16; i++) begin
-            //     w_enable[i]     ='b0;
-            //     w_addr[i]       ='d0;
-            //     w_data_i[i]     ='d0;
-            //     w_data_o[i]     ='d0;
-            // end
         end
         else begin
-            if(nth_conv_i == 'b00) begin
-                BURST_SIZE      = 'd1024;
-            end
-            else if(nth_conv_i == 'b01) begin
+            if(nth_conv_i == 'd0) begin
                 BURST_SIZE      = 'd784;
             end
-            else if(nth_conv_i == 'b10) begin
-                BURST_SIZE      = 'd196;
+            else if(nth_conv_i == 'd1) begin
+                BURST_SIZE      = 'd1176;
+            end
+            else if(nth_conv_i == 'd2) begin
+                BURST_SIZE      = 'd400;
             end
         end
     end
 
-
     DATAINPUT_TOP #
     (
-        .SRAM_DEPTH(1024),
+        .SRAM_DEPTH(1176),
         .BAND_WIDTH(25),
         .DATA_WIDTH(8)
     )
@@ -93,6 +70,7 @@ module SA_TOP
        .addra                       (addra[14:0]),
        .dia                         (dia),
        .BURST_SIZE                  (BURST_SIZE),
+       .ofmap_size_i                (ofmap_size_i),
        .weight_ready_i              (data_enable_o),
        .data_valid_o                (data_valid),
        .sa_data_o                   (data_i),
@@ -127,7 +105,6 @@ module SA_TOP
         .weight_i(w_data_o),
         //ctrl interface
         .weight_stop(weight_stop_o),
-        .nth_conv_i(nth_conv_o),
         //accumulator interface
         .accu_data_o(accu_data_o),
         .accu_valid(accu_valid)
