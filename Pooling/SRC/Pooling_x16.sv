@@ -1,6 +1,7 @@
 //version 2022-01-13
 //editor IM SUHYEOK
 
+`include "Pooling.sv"
 module Pooling_x16 #(
     parameter       POOL_NUM            = 16,
     parameter       DATA_WIDTH          = 8,

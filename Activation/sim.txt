@@ -1,0 +1,4 @@
+xvlog --sv .\TB\TB_Activation_fc.sv
+xelab -debug all -top Activation_fc_tb -snapshot Activation_fc_tb_snapshot
+xsim Activation_fc_tb_snapshot -tclbatch xsim_cfg.tcl
+xsim --gui Activation_fc_tb_snapshot.wdb
