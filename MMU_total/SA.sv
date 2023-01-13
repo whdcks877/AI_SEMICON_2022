@@ -2,6 +2,7 @@
 // JY Lee
 // Version 2023-01-11 1st verified
 // 2023-01-12 2nd verified
+// 2023-01-13 3rd verified by JY Lee
 
 module SA
 (
@@ -19,6 +20,7 @@ module SA
 
     //ctrl interface
     input   wire                weight_stop,
+    input   wire                nth_conv_i,
     //accumulator interface
     output  reg     [7:0]       accu_data_o[15:0],
     output  reg                 accu_valid[15:0]
@@ -6486,17 +6488,18 @@ module SA
             accu_valid[3] <= accu_valid[2];
             accu_valid[4] <= accu_valid[3];
             accu_valid[5] <= accu_valid[4];
-            accu_valid[6] <= accu_valid[5];
-            accu_valid[7] <= accu_valid[6];
-            accu_valid[8] <= accu_valid[7];
-            accu_valid[9] <= accu_valid[8];
-            accu_valid[10] <= accu_valid[9];
-            accu_valid[11] <= accu_valid[10];
-            accu_valid[12] <= accu_valid[11];
-            accu_valid[13] <= accu_valid[12];
-            accu_valid[14] <= accu_valid[13];
-            accu_valid[15] <= accu_valid[14];
-            
+            if(nth_conv_i) begin
+                accu_valid[6] <= accu_valid[5];
+                accu_valid[7] <= accu_valid[6];
+                accu_valid[8] <= accu_valid[7];
+                accu_valid[9] <= accu_valid[8];
+                accu_valid[10] <= accu_valid[9];
+                accu_valid[11] <= accu_valid[10];
+                accu_valid[12] <= accu_valid[11];
+                accu_valid[13] <= accu_valid[12];
+                accu_valid[14] <= accu_valid[13];
+                accu_valid[15] <= accu_valid[14];
+            end
         end
     end
 

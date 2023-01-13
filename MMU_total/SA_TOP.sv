@@ -2,6 +2,7 @@
 // JY Lee
 // Version 2023-01-10 1st verified
 // 2023-01-12 2nd verified
+// 2023-01-13 3rd verified by JY Lee
 
 module SA_TOP
 (
@@ -126,6 +127,7 @@ module SA_TOP
         .weight_i(w_data_o),
         //ctrl interface
         .weight_stop(weight_stop_o),
+        .nth_conv_i(nth_conv_o),
         //accumulator interface
         .accu_data_o(accu_data_o),
         .accu_valid(accu_valid)

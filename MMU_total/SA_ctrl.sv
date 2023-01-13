@@ -2,6 +2,7 @@
 // JY Lee
 // Version 2023-01-10 1st verified
 // 2023-01-12 2nd verified
+// 2023-01-13 3rd verified by JY Lee
 
 module SA_ctrl
 (
@@ -21,7 +22,6 @@ module SA_ctrl
     output  reg         weight_stop
 );
     reg     [1:0]       state,      state_n;
-    reg                 wieght_stop_n;
     reg                 data_enable_n;
     reg                 nth_conv_n;
     reg     [4:0]       cnt,        cnt_n;

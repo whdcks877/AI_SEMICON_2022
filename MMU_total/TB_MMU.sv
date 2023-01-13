@@ -1,4 +1,5 @@
 // 2023-01-12 2nd verified by JY Lee
+// 2023-01-13 3rd verified by JY Lee
 
 `define     TIMEOUT_CYCLE           10000000
 
@@ -8,14 +9,14 @@ module TB_SA();
     reg                         clk;
     reg                         rst_n;
     reg                         start;
-    reg                         nth_conv_i;
+    reg     [1:0]               nth_conv_i;
 
     reg                         wea;
     reg     [DATA_WIDTH-1:0]    dia;
     reg     [16:0]              addra;
 
-    reg     [DATA_WIDTH-1:0]    accu_data[16];
-    reg                         accu_valid[16];
+    reg     [DATA_WIDTH-1:0]    accu_data[15:0];
+    reg                         accu_valid[15:0];
 
 
     initial begin
@@ -92,7 +93,7 @@ module TB_SA();
 
         #40
         start                       <= 'b1;
-        nth_conv_i                  <= 'd0;
+        nth_conv_i                  <= 'd1;
     end
 
 

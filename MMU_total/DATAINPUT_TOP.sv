@@ -2,10 +2,10 @@
 // include BUFF_INPUT.sv, DATA_SETUP.sv
 
 // Authors:
-// - Sangmin Park
+// - Sangmin Park(reviced by JY Lee)
 // v1.2
 // Version Updated:
-// - 20220112
+// - 20220113(roll back)
 
 module DATAINPUT_TOP #
 (
