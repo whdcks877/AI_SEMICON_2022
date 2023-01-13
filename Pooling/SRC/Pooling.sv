@@ -51,16 +51,6 @@ module Pooling #(
                 if(act_valid_i) begin
                     a1 = act_result_i;
                     a2 = act_result_address_i;
-                    state_n = S_POOL;
-                end
-                else begin
-                    state_n = S_INIT;
-                end
-            end
-            S_POOL: begin
-                if(act_valid_i) begin
-                    a1 = act_result_i;
-                    a2 = act_result_address_i;
                     state_n = S_POOL1;
                 end
                 else begin
@@ -92,7 +82,7 @@ module Pooling #(
                 end
             end
             S_POOL3 : begin
-                state_n = S_POOL;
+                state_n = S_INIT;
                 if(act_valid_i) begin
                 pool_valid = 1'b1;
                     if (act_result_i > a1) begin
