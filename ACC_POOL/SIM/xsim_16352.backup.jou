@@ -1,0 +1,14 @@
+#-----------------------------------------------------------
+# xsim v2021.2 (64-bit)
+# SW Build 3367213 on Tue Oct 19 02:48:09 MDT 2021
+# IP Build 3369179 on Thu Oct 21 08:25:16 MDT 2021
+# Start of session at: Fri Jan 13 14:44:03 2023
+# Process ID: 16352
+# Current directory: C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/SIM
+# Command line: xsim.exe -mode tcl -source {xsim.dir/tb_acc_active_snapshot/xsim_script.tcl}
+# Log file: C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/SIM/xsim.log
+# Journal file: C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/SIM\xsim.jou
+# Running On: DESKTOP-IL1PJ29, OS: Windows, CPU Frequency: 1800 MHz, CPU Physical cores: 4, Host memory: 8467 MB
+#-----------------------------------------------------------
+source xsim.dir/tb_acc_active_snapshot/xsim_script.tcl
+source xsim_cfg.tcl

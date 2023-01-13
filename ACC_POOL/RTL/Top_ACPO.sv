@@ -1,6 +1,9 @@
 //version 2022-01-13
 //editor IM SUHYEOK
 
+`include "..\..\Activation\RTL\Activation_x17.sv"
+`include "..\..\Pooling\SRC\Pooling_x16.sv"
+
 module Top_ACPO #(
     parameter       ACC_NUM             = 16,
     parameter       POOL_NUM            = 16,

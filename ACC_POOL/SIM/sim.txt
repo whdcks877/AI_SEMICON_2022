@@ -1,0 +1,6 @@
+xvlog --sv TB\tb_acc_active.sv
+xelab -debug all -top tb_acc_active -snapshot tb_acc_active_snapshot
+xsim tb_acc_active_snapshot -tclbatch xsim_cfg.tcl
+xsim --gui tb_acc_active_snapshot.wdb
+
+rm -rf *.jou *.log *.pb *.wdb xsim.dir

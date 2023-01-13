@@ -1,6 +1,7 @@
 //version 2022-01-13
 //editor IM SUHYEOK
-
+`include "Activation_fc.sv"
+`include "Activation_sa.sv"
 module Activation_x17 #(
     parameter       ACC_NUM             = 16,
     parameter       FA_NUM              = 1,
