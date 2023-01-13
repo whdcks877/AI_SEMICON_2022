@@ -1,1 +1,0 @@
--debug "all" -top "tb_acc_active" -snapshot "tb_acc_active_snapshot" 
