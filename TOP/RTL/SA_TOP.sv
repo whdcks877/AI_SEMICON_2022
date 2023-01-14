@@ -66,7 +66,7 @@ module SA_TOP
        .clk                         (clk),
        .rst                         (!rst_n),
 
-       .wea                         ((addra[16:16]=='b0) && wea),
+       .wea                         ((addra[16:16]==2'b0) && wea),
        .addra                       (addra[15:0]),
        .dia                         (dia),
        .BURST_SIZE                  (BURST_SIZE),
@@ -126,7 +126,7 @@ module SA_TOP
     //MSB 4bit => column, LSB 6bit => row
     weight_bram u_weight_bram(
         .clk(clk),
-        .wea((addra[16:15]=='b01) && wea),
+        .wea((addra[16:16]==1'b1) && wea),
         .enb(w_enable),
         .addra(addra[9:0]),
         .addrb(w_addr),
