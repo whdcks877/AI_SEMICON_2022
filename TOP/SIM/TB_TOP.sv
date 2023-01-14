@@ -4,11 +4,12 @@
 `define     CH_SIZE         3      //setting input channel size
 `define     OFMAP_SIZE      4*4     //setting ouput feature map size
 `define     OFMAP_SIZE_SQRT 4
+`define     FC_SIZE         120
 `define     N_COL           16
 
 `define     TIMEOUT_CYCLE           10000000
 
-module TB_SA();
+module TB_TOP();
 
     parameter                   DATA_WIDTH = 8;
     reg                         clk;
@@ -37,6 +38,9 @@ module TB_SA();
     logic                         pool_valid_o [16];
     logic [7:0]        pool_result_o [16];
     logic [9:0]     pool_result_address_o [16];
+
+    logic    [6:0]   in_node_num_i; //fully connected configure
+    logic    [6:0]   out_node_num_i;
 
     byte psum_arr [`N_COL][`CH_SIZE][`OFMAP_SIZE];
     int correct_data [`N_COL][`OFMAP_SIZE]= '{default:0};
@@ -85,8 +89,8 @@ module TB_SA();
 
 
     task test_init_fc();
-        in_node_num_i = 0;
-        out_node_num_i = 0;
+        in_node_num= 0;
+        out_node_num = 0;
 
         wbuf_if.init();
         ifbuf_if.init();
@@ -135,15 +139,21 @@ module TB_SA();
         test_init_fc();
         rst_n                   <= 1'b1;
 
-        repeat (1024) @(posedge clk) begin
-            wea                 <= 1'b1;
-            addra               <= addra + 'd1;
-            dia                 <= 'd1;
-        end
-        repeat (1024*24) @(posedge clk) begin
+         repeat (2048*25) @(posedge clk) begin
             wea                 <= 1'b1;
             addra               <= addra + 'd1;
             dia                 <= dia + 'd1;
+            
+
+            // if(addra[10:0] == 'd1024) begin
+            //     addra[16:10]    <= addra[16:10] + 'd1;
+            //     addra[9:0]      <= 'd0;
+            //     dia             <= 'd0;
+            // end
+            // else begin
+            //     addra           <= addra + 'd1;
+            //     dia             <= dia + 'd1;
+            // end
         end
         repeat (1) @(posedge clk) begin
             wea                 <= 1'b0;
@@ -177,7 +187,7 @@ module TB_SA();
         end
 
         #40
-        start                       <= 'b1;
+        start                       <= 'd1;
         nth_conv_i                  <= 'd1;
     end
 
@@ -188,7 +198,7 @@ module TB_SA();
         out_node_num_i = out_node_num; 
 
         @(posedge clk);
-        start_i = 0;
+        start = 0;
         in_node_num_i = 0;
         out_node_num_i = 0; 
     endtask

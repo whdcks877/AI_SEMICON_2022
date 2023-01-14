@@ -1,3 +1,8 @@
+`define POOL_NUM 16
+`define ADDRESS_WIDTH 10
+`define     FC_SIZE         120
+`define DATA_WIDTH  8
+
 module TOP(
     input   wire            clk,
     input   wire            rst_n,
@@ -12,13 +17,12 @@ module TOP(
     input   wire    [6:0]   in_node_num_i, //fully connected configure
     input   wire    [6:0]   out_node_num_i,
 
-
     //weight_bram write
     input   wire            wea,
     input   wire    [16:0]  addra,
     input   wire    [7:0]   dia,
 
-
+    //fully connected buffer
     input wire                          wbuf_wren_i,
     input wire  [6:0]                   wbuf_wrptr_i [`FC_SIZE],
     input wire  [7:0]                   wbuf_wdata_i [`FC_SIZE],
@@ -45,12 +49,19 @@ module TOP(
     reg start_fc;
 
     wire [7:0]  psum_sa [15:0];
-    wire        psum_fc = {psum_sa[0], psum_sa[1], psum_sa[2], psum_sa[3], psum_sa[4], psum_sa[5], psum_sa[6], psum_sa[7], psum_sa[8], 
-                        psum_sa[9], psum_sa[10], psum_sa[11], psum_sa[12], psum_sa[13], psum_sa[14], psum_sa[15]};
+    wire [7:0]  psum_fc [16];
 
     wire sa_valid [15:0];
-    wire fc_valid = {sa_valid[0], sa_valid[1], sa_valid[2], sa_valid[3], sa_valid[4], sa_valid[5], sa_valid[6], sa_valid[7], sa_valid[8], 
-                    sa_valid[9], sa_valid[10], sa_valid[11], sa_valid[12], sa_valid[13], sa_valid[14], sa_valid[15]};
+    wire fc_valid [16];
+    
+    genvar i;
+    generate
+        for (i = 0; i<16; i++) begin
+            assign psum_fc[i] = psum_sa[i];
+            assign fc_valid[i] = sa_valid[i];
+        end
+    endgenerate
+
 
     always_comb begin
         if(start == 2'd1)
@@ -71,6 +82,7 @@ module TOP(
         .rst_n(rst_n),
         .start(start_sa),
         .nth_conv_i(nth_conv_i),
+        .ofmap_size_i(ofmap_size_i),
         .wea(wea),
         .addra(addra),
         .dia(dia),
