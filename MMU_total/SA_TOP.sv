@@ -66,8 +66,8 @@ module SA_TOP
        .clk                         (clk),
        .rst                         (!rst_n),
 
-       .wea                         ((addra[16:15]=='b00) && wea),
-       .addra                       (addra[14:0]),
+       .wea                         ((addra[16:16]=='b0) && wea),
+       .addra                       (addra[15:0]),
        .dia                         (dia),
        .BURST_SIZE                  (BURST_SIZE),
        .ofmap_size_i                (ofmap_size_i),

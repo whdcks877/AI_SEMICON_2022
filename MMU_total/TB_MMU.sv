@@ -58,7 +58,7 @@ module TB_MMU();
         //     addra               <= addra + 'd1;
         //     dia                 <= 'd1;
         // end
-        repeat (1024*25) @(posedge clk) begin
+        repeat (2048*25) @(posedge clk) begin
             wea                 <= 1'b1;
             addra               <= addra + 'd1;
             dia                 <= dia + 'd1;
