@@ -1,22 +1,22 @@
 
-module BUFF_INPUT #
+module Address_buff #
 (
     parameter SRAM_DEPTH=1024,
-    parameter BAND_WIDTH=25,
-    parameter DATA_WIDTH=8
+    parameter BAND_WIDTH=16,
+    parameter DATA_WIDTH=10
 )
 (
     input   wire  clk,
-    input   wire  wea,
-    input   wire  enb[BAND_WIDTH],
-    input   wire  [$clog2(SRAM_DEPTH)+$clog2(BAND_WIDTH)-1:0] addra,         // MSB[$clog2(SRAM_DEPTH)+4:$clog2(SRAM_DEPTH)]: selecting which block among 25 BRAMs
-    input   wire  [$clog2(SRAM_DEPTH)-1:0] addrb[BAND_WIDTH],                // LSB[$clog2(SRAM_DEPTH)-1:0]: selecting in one BRAM
+    input   wire  wea[BAND_WIDTH],
+    input   wire  enb,
+    input   wire  [$clog2(SRAM_DEPTH)-1:0] addra[BAND_WIDTH],                    
+    input   wire  [$clog2(SRAM_DEPTH)+$clog2(BAND_WIDTH)-1:0] addrb,          
     
-    input   reg   [DATA_WIDTH-1:0]  dia,
-    output  reg   [DATA_WIDTH-1:0]  dob[BAND_WIDTH]
+    input   reg   [DATA_WIDTH-1:0]  dia[BAND_WIDTH],
+    output  reg   [DATA_WIDTH-1:0]  dob
 );
 
-    wire        [$clog2(BAND_WIDTH)-1:0]   BLOCK_NUMa = addra[$clog2(SRAM_DEPTH)+$clog2(BAND_WIDTH)-1:$clog2(SRAM_DEPTH)];
+    wire        [$clog2(BAND_WIDTH)-1:0]   BLOCK_NUMa = addrb[$clog2(SRAM_DEPTH)+$clog2(BAND_WIDTH)-1:$clog2(SRAM_DEPTH)];
 
     genvar  i;
     generate
@@ -28,16 +28,14 @@ module BUFF_INPUT #
             u_ram
             (
                 .clk                    (clk),
-                .wea                    (wea && (BLOCK_NUMa == i)),
-        
-                .enb                    (enb[i]),
-                .addra                  (addra[$clog2(SRAM_DEPTH)-1:0]),
-                .addrb                  (addrb[i]),
+                .wea                    (wea[i]),
+                .enb                    (enb && (BLOCK_NUMa == i)),
+                .addra                  (addra[i]),
+                .addrb                  (addrb[$clog2(SRAM_DEPTH)-1:0]),
 
-                .dia                    (dia),
-                .dob                    (dob[i])
+                .dia                    (dia[i]),
+                .dob                    (dob)
             );
         end
     endgenerate
-
 endmodule
