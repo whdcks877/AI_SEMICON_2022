@@ -31,17 +31,18 @@ module TOP(
     input wire  [6:0]                   ifmap_wrptr_i,
     input wire  [7:0]                   ifmap_wdata_i,
     
-    //Fully connected output
-    output wire                         fc_last_o,
-    output wire                         fc_valid_o,
-    output wire [`DATA_WIDTH-1:0]        fc_result_o,
+    input wire                          sa_data_rden_i,
+    input wire  [13:0]                  sa_data_rdptr_i,
 
-    //pooling 
-    output wire                         pool_last_o [`POOL_NUM],
-    output wire                         pool_valid_o [`POOL_NUM],
-    output wire [`DATA_WIDTH-1:0]        pool_result_o [`POOL_NUM],
-    output wire [`ADDRESS_WIDTH-1:0]     pool_result_address_o [`POOL_NUM]
+    input wire                          fc_data_rden_i,
+    input wire  [9:0]                   fc_data_rdptr_i,
 
+    input wire                          pool_address_rden_i,
+    input wire  [13:0]                  pool_address_rdptr_i,
+
+    output wire [`DATA_WIDTH-1:0]       sa_data_rdata_o,
+    output wire [`DATA_WIDTH-1:0]       fc_data_rdata_o,
+    output wire [9:0]                   pool_address_rdata_o
 
 );
 
@@ -106,13 +107,15 @@ module TOP(
         .ifmap_wren_i(ifmap_wren_i),
         .ifmap_wrptr_i(ifmap_wrptr_i),
         .ifmap_wdata_i(ifmap_wdata_i),
-        .fc_last_o(fc_last_o),
-        .fc_valid_o(fc_valid_o),
-        .fc_result_o(fc_result_o),
-        .pool_last_o(pool_last_o),
-        .pool_valid_o(pool_valid_o),
-        .pool_result_o(pool_result_o),
-        .pool_result_address_o(pool_result_address_o)
+        .sa_data_rden_i(sa_data_rden_i),
+        .sa_data_rdptr_i(sa_data_rdptr_i),
+        .fc_data_rden_i(fc_data_rden_i),
+        .fc_data_rdptr_i(fc_data_rdptr_i),
+        .pool_address_rden_i(pool_address_rden_i),
+        .pool_address_rdptr_i(pool_address_rdptr_i),
+        .sa_data_rdata_o(sa_data_rdata_o),
+        .fc_data_rdata_o(fc_data_rdata_o),
+        .pool_address_rdata_o(pool_address_rdata_o)
     );
 
 endmodule
