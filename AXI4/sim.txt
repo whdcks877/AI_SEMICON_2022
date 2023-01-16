@@ -1,0 +1,6 @@
+xvlog --sv tb_addr_decoder.sv
+xelab -debug all -top tb_addr_decoder -snapshot tb_addr_decoder_snapshot
+xsim tb_addr_decoder_snapshot -tclbatch xsim_cfg.tcl
+xsim --gui tb_addr_decoder_snapshot.wdb
+
+rm -rf *.jou *.log *.pb *.wdb xsim.dir
