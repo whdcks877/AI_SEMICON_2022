@@ -27,14 +27,18 @@ module ACC_POOL(
     input wire  [6:0]                   ifmap_wrptr_i,
     input wire  [7:0]                   ifmap_wdata_i,
 
-    output wire                         fc_last_o,
-    output wire                         fc_valid_o,
-    output wire [`DATA_WIDTH-1:0]        fc_result_o,
+    input wire                          sa_data_rden_i,
+    input wire  [13:0]                  sa_data_rdptr_i,
 
-    output wire                         pool_last_o [`POOL_NUM],
-    output wire                         pool_valid_o [`POOL_NUM],
-    output wire [`DATA_WIDTH-1:0]        pool_result_o [`POOL_NUM],
-    output wire [`ADDRESS_WIDTH-1:0]     pool_result_address_o [`POOL_NUM]
+    input wire                          fc_data_rden_i,
+    input wire  [9:0]                   fc_data_rdptr_i,
+
+    input wire                          pool_address_rden_i,
+    input wire  [13:0]                  pool_address_rdptr_i,
+
+    output wire [`DATA_WIDTH-1:0]       sa_data_rdata_o,
+    output wire [`DATA_WIDTH-1:0]       fc_data_rdata_o,
+    output wire [9:0]                   pool_address_rdata_o
 );
 
     wire                           act_last [`ACC_NUM  + `FA_NUM];
@@ -78,13 +82,15 @@ module ACC_POOL(
         .acc_valid_i(act_valid),
         .acc_result_i(act_result),
         .acc_result_address_i(act_result_address),
-        .act_last_o(fc_last_o),
-        .act_valid_o(fc_valid_o),
-        .act_result_o(fc_result_o),
-        .pool_last_o(pool_last_o),
-        .pool_valid_o(pool_valid_o),
-        .pool_result_o(pool_result_o),
-        .pool_result_address_o(pool_result_address_o)
+        .enb_d_sa(sa_data_rden_i),                                                     //data(sa) bram read enable
+        .addrb_d_sa(sa_data_rdptr_i),       //data(sa) bram read address
+        .enb_d_fc(fc_data_rden_i),                                                     //data(fc) bram read enable
+        .addrb_d_fc(fc_data_rdptr_i),                          //data(fc) bram read address
+        .enb_a(pool_address_rden_i),                                                         //address bram read enable
+        .addrb_a(pool_address_rdptr_i),           //address bram read address
+        .dob_d_sa(sa_data_rdata_o),                                     //data(sa) bram output
+        .dob_d_fc(fc_data_rdata_o),                                     //data(fc) bram output
+        .dob_a(pool_address_rdata_o)                                         //address bram output
     );
 
 endmodule

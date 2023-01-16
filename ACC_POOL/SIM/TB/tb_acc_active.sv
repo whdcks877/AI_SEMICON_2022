@@ -7,9 +7,9 @@
 
 
 
-`define     CH_SIZE         3      //setting input channel size
-`define     OFMAP_SIZE      4*4     //setting ouput feature map size
-`define     OFMAP_SIZE_SQRT 4
+`define     CH_SIZE         1      //setting input channel size
+`define     OFMAP_SIZE      28*28     //setting ouput feature map size
+`define     OFMAP_SIZE_SQRT 28
 `define     N_COL           16
 `define     TIMEOUT_CYCLE         10000000
 
@@ -37,6 +37,18 @@ module tb_acc_active();
     logic                         pool_valid_o [16];
     logic [7:0]        pool_result_o [16];
     logic [9:0]     pool_result_address_o [16];
+
+    logic                         sa_data_rden_i;
+    logic [13:0]                  sa_data_rdptr_i;
+    logic                         fc_data_rden_i;
+    logic [9:0]                   fc_data_rdptr_i;
+    logic                         pool_address_rden_i;
+    logic [13:0]                  pool_address_rdptr_i;
+    logic [7:0]                     sa_data_rdata_o;
+    logic [7:0]                  fc_data_rdata_o;
+    logic [9:0]                   pool_address_rdata_o;
+
+    
 
     byte psum_arr [`N_COL][`CH_SIZE][`OFMAP_SIZE];
     int correct_data [`N_COL][`OFMAP_SIZE]= '{default:0};
@@ -83,13 +95,15 @@ module tb_acc_active();
         .ifmap_wren_i(ifbuf_if.wren_i),
         .ifmap_wrptr_i(ifbuf_if.wrptr_i),
         .ifmap_wdata_i(ifbuf_if.ifmap_i),
-        .fc_last_o(fc_last_o),
-        .fc_valid_o(fc_valid_o),
-        .fc_result_o(fc_result_o),
-        .pool_last_o(pool_last_o),
-        .pool_valid_o(pool_valid_o),
-        .pool_result_o(pool_result_o),
-        .pool_result_address_o(pool_result_address_o)
+        .sa_data_rden_i(sa_data_rden_i),
+        .sa_data_rdptr_i(sa_data_rdptr_i),
+        .fc_data_rden_i(fc_data_rden_i),
+        .fc_data_rdptr_i(fc_data_rdptr_i),
+        .pool_address_rden_i(pool_address_rden_i),
+        .pool_address_rdptr_i(pool_address_rdptr_i),
+        .sa_data_rdata_o(sa_data_rdata_o),
+        .fc_data_rdata_o(fc_data_rdata_o),
+        .pool_address_rdata_o(pool_address_rdata_o)
 );
 
     task test_init();
@@ -100,6 +114,12 @@ module tb_acc_active();
         start_i = 0;
         in_node_num_i = 0;
         out_node_num_i = 0;
+        sa_data_rden_i = 0;
+        sa_data_rdptr_i = 0;
+        fc_data_rden_i = 0;
+        fc_data_rdptr_i = 0;
+        pool_address_rden_i = 0;
+        pool_address_rdptr_i = 0;
 
         wbuf_if.init();
         ifbuf_if.init();
@@ -197,54 +217,43 @@ module tb_acc_active();
         in_node_num_i = 0;
         out_node_num_i = 0; 
     endtask
-/*
-    task automatic acc_test_capture(input int col);
-        byte data;
-        int last = 0;
-        int idx[16] = '{default:0};
 
-        while(1) begin
-
-            for(int ch = 0; ch < 16; ch++) begin
-                if(act_valid_o[ch]==1) begin
-                    
-                end
-            end
-            if(act_valid_o==1) begin
-                for(int i = 0; i < 16; i++) begin
-                    $display("captured data");
-                    $write("%d ",act_result_o[i][idx]);
-                end
-                $write("\n");
-                for(int i = 0; i < 16; i++) begin
-                    $display("answer data");
-                    $write("%d ",correct_data[i][idx]);
-                end
-                $write("\n");
-                idx++;
-                if(act_last_o)
-                    last = 1;
-            end
-            @(posedge clk);
-
-            if(last) begin
-                $display("test pass!");
-                $finish;
-            end
-        end
-    endtask
-*/
     initial begin
         
         test_init();
         repeat (1) @(posedge clk);
+        
+        acc_test_feeddata(16);
+         repeat (10000) @(posedge clk);
+        $display("Print SA result");
 
-        fork
-            acc_test_feeddata(16);
-        join
+        for(int i = 0; i<16; i++) begin
+            for(int j = 0; j < `OFMAP_SIZE/4; j++ ) begin
+                sa_data_rden_i <= 1;
+                sa_data_rdptr_i <= (i<<10) + j;
+                @(posedge clk);
+
+                $display("%d||  %dth : %d",i,j,sa_data_rdata_o);
+                sa_data_rden_i <= 0;
+            end
+        end
+
+        $display("Print SA_address result");
+        for(int i = 0; i<16; i++) begin
+            for(int j = 0; j < `OFMAP_SIZE/4; j++ ) begin
+                pool_address_rden_i <= 1;
+                pool_address_rdptr_i <= (i<<10) + j;
+
+                @(posedge clk);
+                $display("%d||  %dth : %d",i,j,pool_address_rdata_o);
+                pool_address_rden_i <= 0;
+            end
+        end
         
         $display("pass");
-        repeat (10000) @(posedge clk);
+       
+        repeat (10) @(posedge clk);
+
         $finish;
         
 /*

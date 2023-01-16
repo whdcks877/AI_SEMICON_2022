@@ -1,0 +1,21 @@
+0.7
+2020.2
+Oct 19 2021
+03:16:22
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/RTL/ACC_ACTIVE.sv,1673588473,verilog,,,C:/Users/whdck/Desktop/인반설/AI_SEMICON/Accumulator/SRC/Accumulator_x16.sv;C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/FullyConnected.sv,ACC_ACTIVE,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/RTL/ACC_POOL.sv,1673856605,verilog,,,C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/RTL/ACC_ACTIVE.sv;C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/RTL/Top_ACPO.sv,ACC_POOL,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/RTL/Top_ACPO.sv,1673856494,verilog,,,,Top_ACPO,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/SIM/TB/tb_acc_active.sv,1673857415,systemVerilog,,,C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/RTL/ACC_POOL.sv;C:/Users/whdck/Desktop/인반설/AI_SEMICON/Accumulator/SRC/ACC_IF_x16.sv;C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/SIM/TB/fc_w_buf_if.sv;C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/SIM/TB/fc_ifmap_buf_if.sv,tb_acc_active,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/Accumulator/SRC/ACC_IF_x16.sv,1673420527,verilog,,,,ACC_IF_x16,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/Accumulator/SRC/Accumulator.sv,1673361430,verilog,,,C:/Users/whdck/Desktop/인반설/AI_SEMICON/Accumulator/SRC/simple_dual_one_clock.sv,Accumulator,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/Accumulator/SRC/Accumulator_x16.sv,1673361167,verilog,,,C:/Users/whdck/Desktop/인반설/AI_SEMICON/Accumulator/SRC/Accumulator.sv,Accumulator_x16,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/Accumulator/SRC/simple_dual_one_clock.sv,1671461173,verilog,,,,simple_dual_one_clock,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/FC_weight_buf.sv,1673156712,verilog,,,C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/rams_sp_rf_rst.sv,fc_weight_buf,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/FullyConnected.sv,1673159626,verilog,,,C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/fc_controller.sv;C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/FC_weight_buf.sv;C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/ifmap_buf.sv;C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/pe_1x120.sv,FullyConnected,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/fc_controller.sv,1673156771,verilog,,,,fc_controller,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/ifmap_buf.sv,1673156725,verilog,,,C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/rams_sp_rf_rst.sv,ifmap_buf,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/pe.sv,1672106937,verilog,,,,pe,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/pe_1x120.sv,1673156276,verilog,,,C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/pe.sv,pe_1x120,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/RTL/rams_sp_rf_rst.sv,1672196583,verilog,,,,rams_sp_rf_rst,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/SIM/TB/fc_ifmap_buf_if.sv,1672586570,verilog,,,,fc_ifmap_buf_if,,,,,,,,
+C:/Users/whdck/Desktop/인반설/AI_SEMICON/FullyConnected/SIM/TB/fc_w_buf_if.sv,1673159376,verilog,,,,fc_w_buf_if,,,,,,,,

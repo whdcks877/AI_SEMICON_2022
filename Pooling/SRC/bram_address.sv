@@ -12,11 +12,12 @@ module bram_address_counter#
 );
     always_ff @(posedge clk) begin
         if(!rst) begin
+            address <= 'd0;
+        end else begin
             if(enable) begin
                 address <= address + 1'b1;
             end
         end
-        else
-            address <= 'd0;
+            
     end
 endmodule

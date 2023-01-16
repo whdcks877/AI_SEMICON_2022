@@ -1,0 +1,14 @@
+Vivado Simulator v2021.2
+Copyright 1986-1999, 2001-2021 Xilinx, Inc. All Rights Reserved.
+Running: D:/Xilinx/Vivado/2021.2/bin/unwrapped/win64.o/xelab.exe -debug all -top tb_acc_active -snapshot tb_acc_active_snapshot 
+Multi-threading is on. Using 6 slave threads.
+Starting static elaboration
+Pass Through NonSizing Optimizer
+ERROR: [VRFC 10-2063] Module <Activation_x17> not found while processing module instance <u_active> [C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/SIM/TB/..\..\RTL/ACC_ACTIVE.sv:78]
+ERROR: [VRFC 10-2063] Module <Pooling_x16> not found while processing module instance <u_POOL> [C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/SIM/TB/..\..\RTL/Top_ACPO.sv:70]
+ERROR: [VRFC 10-2063] Module <Data_sa_buff> not found while processing module instance <u_data_sa_buff> [C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/SIM/TB/..\..\RTL/Top_ACPO.sv:83]
+ERROR: [VRFC 10-2063] Module <Data_fc_buff> not found while processing module instance <u_data_fc_buff> [C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/SIM/TB/..\..\RTL/Top_ACPO.sv:93]
+ERROR: [VRFC 10-2063] Module <Address_buff> not found while processing module instance <u_address_buff> [C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/SIM/TB/..\..\RTL/Top_ACPO.sv:103]
+ERROR: [VRFC 10-2063] Module <bram_address_counter_x16> not found while processing module instance <u_bram_address_x16> [C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/SIM/TB/..\..\RTL/Top_ACPO.sv:113]
+ERROR: [VRFC 10-2063] Module <bram_address_counter> not found while processing module instance <u_bram_address> [C:/Users/whdck/Desktop/인반설/AI_SEMICON/ACC_POOL/SIM/TB/..\..\RTL/Top_ACPO.sv:120]
+ERROR: [XSIM 43-3322] Static elaboration of top level Verilog design unit(s) in library work failed.
