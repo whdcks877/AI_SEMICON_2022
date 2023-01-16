@@ -14,8 +14,8 @@ module tb_FullyConnected();
     logic [6:0] out_node_num_i; 
 
     
-    logic [7:0] wbuf_wdata [`FC_SIZE];
-    logic [6:0] addr [`FC_SIZE];
+    logic [7:0] wbuf_wdata;
+    logic [16:0] addr;
 
     logic [6:0] ifmap_wrptr;
 
@@ -105,10 +105,13 @@ module tb_FullyConnected();
     task buffer_load();
         $display("buffer load start");
         //weight_buffer write
-        for (int i=0; i<out_node_num; i++) begin
-            addr = '{default:i};
-            wbuf_if.write_ram(addr,weight[i]);
-        end
+        
+            for(int i=0; i<84; i++) begin
+                for(int j = 0; j<120; j++) begin
+                    addr = (j<<10) + i;
+                    wbuf_if.write_ram(addr, weight[i][j]);
+                end
+            end
         
 
         //ifmap buffer write

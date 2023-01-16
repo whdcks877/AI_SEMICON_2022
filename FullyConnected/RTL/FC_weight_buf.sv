@@ -6,10 +6,12 @@ module fc_weight_buf(
     input wire rst_all,
 
     input wire [6:0] rdptr_i,
-    input wire [6:0] wrptr_i [120],
+    //input wire [6:0] wrptr_i [120],
+    input wire [16:0] wrptr_i,
     input wire rden_i,
     input wire wren_i,
-    input wire [7:0] weight_i [120],
+    //input wire [7:0] weight_i [120],
+    input wire [7:0] weight_i,
     output wire [7:0] weight_o [120]
 );
 
@@ -17,6 +19,8 @@ module fc_weight_buf(
     reg [6:0] rdptr_reg [119]; 
     reg rden_reg [119];
     reg rst_n_reg [119];
+    wire [6:0] wrptr = wrptr_i[6:0];
+    wire [6:0] bram_sel = wrptr_i[16:10];
 
     always_ff @(posedge clk) begin
         if(!rst_all) begin
@@ -38,23 +42,15 @@ module fc_weight_buf(
         end
     end
 
-    always_comb begin
-        if(rden_i) begin
-            ptr[0] = rdptr_i;
-            ptr[1:119] = rdptr_reg[0:118];
-        end else begin
-            ptr = wrptr_i;
-        end
-    end
 
     rams_sp_rf_rst #(.SRAM_DEPTH(84), .DATA_WIDTH(8)) buf0(
                 .clk(clk),
                 .en(rden_i),
-                .we(wren_i),
+                .we(wren_i && (bram_sel == 7'd0)),
                 .rst_n(rst_all && rst_n),
-                .addr(ptr[0]),
+                .addr(rden_i ? rdptr_i : wrptr),
                 
-                .di(weight_i[0]),
+                .di(weight_i),
                 .dout(weight_o[0])
             );
 
@@ -64,10 +60,10 @@ module fc_weight_buf(
             rams_sp_rf_rst #(.SRAM_DEPTH(84), .DATA_WIDTH(8)) u_buf(
                 .clk(clk),
                 .en(rden_reg[i-1]),
-                .we(wren_i),
+                .we(wren_i && (bram_sel == i)),
                 .rst_n(rst_all & rst_n_reg[i-1]),
-                .addr(ptr[i]),
-                .di(weight_i[i]),
+                .addr(rden_i ? rdptr_reg[i-1] : wrptr),
+                .di(weight_i),
                 .dout(weight_o[i])
             );
         end

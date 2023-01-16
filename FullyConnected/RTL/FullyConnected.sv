@@ -13,8 +13,8 @@ module FullyConnected (
 
     //write port  for weight buffer
     input wire          wbuf_wren_i,
-    input wire [6:0]    wbuf_wrptr_i [`FC_SIZE],
-    input wire [7:0]    wbuf_wdata_i [`FC_SIZE],
+    input wire [16:0]    wbuf_wrptr_i,
+    input wire [7:0]    wbuf_wdata_i,
 
     //write port for ifmap buffer
     input wire          ifmap_wren_i,

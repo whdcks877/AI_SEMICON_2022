@@ -179,10 +179,12 @@ module TB_TOP();
 
         for(int i = 0; i<6; i++) begin
             for(int j = 0; j < `OFMAP_SIZE/4; j++ ) begin
-                sa_data_rden_i <= 1;
-                sa_data_rdptr_i <= (i<<10) + j;
+                
+                sa_data_rdptr_i = (i<<10) + j;
+                sa_data_rden_i = 1;
                 @(posedge clk);
-                sa_data_rden_i <= 0;
+                sa_data_rden_i = 0;
+                #1
                 $display("%d||  %dth : %d,      answer: %d",i,j,sa_data_rdata_o, output_ref[i][j]);
                 if(sa_data_rdata_o != output_ref[i][j]) begin
                     $display("mismatch!");
@@ -193,10 +195,4 @@ module TB_TOP();
         repeat (3) @(posedge clk);
         $finish;
     end
-    
-
-
-
-
-
 endmodule

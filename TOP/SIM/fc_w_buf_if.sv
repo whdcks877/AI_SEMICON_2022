@@ -5,11 +5,11 @@ interface fc_w_buf_if(
 
     logic rst_n;
     logic [6:0] rdptr_i;
-    logic [6:0] wrptr_i [`FC_SIZE];
+    logic [16:0] wrptr_i;
     logic rden_i;
     logic wren_i;
-    byte weight_i [`FC_SIZE];
-    byte weight_o [`FC_SIZE];
+    byte weight_i;
+    byte weight_o [120];
 
     task init();
         rst_n = 1;
@@ -21,7 +21,7 @@ interface fc_w_buf_if(
         weight_o = '{default:0};
     endtask
 
-    task automatic write_ram(input logic [6:0] addr[`FC_SIZE], input byte data[`FC_SIZE]);
+    task automatic write_ram(input logic [16:0] addr, input byte data);
         wren_i = 1;
         wrptr_i = addr;
         weight_i = data;

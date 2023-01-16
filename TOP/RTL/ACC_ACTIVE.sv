@@ -1,5 +1,6 @@
-`define FC_SIZE 120
-`define FC_NUM 120
+`include "..\..\Accumulator\SRC\Accumulator_x16.sv"
+`include "..\..\FullyConnected\RTL\FullyConnected.sv"
+
 `define ACC_NUM 16
 `define FA_NUM 1
 `define ADDRESS_WIDTH 10
@@ -19,8 +20,8 @@ module ACC_ACTIVE(
     input wire  [6:0]                   out_node_num_i,
 
     input wire                          wbuf_wren_i,
-    input wire  [6:0]                   wbuf_wrptr_i [`FC_SIZE],
-    input wire  [7:0]                   wbuf_wdata_i [`FC_SIZE],
+    input wire  [16:0]                  wbuf_wrptr_i,
+    input wire  [7:0]                   wbuf_wdata_i,
 
     input wire                          ifmap_wren_i,
     input wire  [6:0]                   ifmap_wrptr_i,

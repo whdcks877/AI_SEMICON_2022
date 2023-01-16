@@ -9,9 +9,9 @@ module tb_fc_weight_buf();
     reg clk;
     reg rst_all;
 
-    logic [6:0] addr [128];
+    logic [16:0] addr;
 
-    byte captured_data [128];
+    byte captured_data [120];
     
     initial begin
 	    #`TIMEOUT_CYCLE $display("Timeout!");
@@ -47,9 +47,11 @@ module tb_fc_weight_buf();
     endtask
 
     task write_buf();
-        for(int i =0; i<84; i++) begin
-            addr = '{default: i};
-            buf_if.write_ram(addr, '{default:i+1});
+        for(int i = 0; i<120; i++) begin
+            for(int j=0; j<84; j++) begin
+                addr = (i<<10) + j;
+                buf_if.write_ram(addr, i+1);
+            end
         end
     endtask
 
@@ -63,7 +65,7 @@ module tb_fc_weight_buf();
             @(posedge clk);
             captured_data = buf_if.weight_o;
             $write("cycle: %d", i);
-            for(int j =0; j<128; j++) begin
+            for(int j =0; j<120; j++) begin
                 $write("%d,  ", captured_data[j]);
             end
             $write("\n");
