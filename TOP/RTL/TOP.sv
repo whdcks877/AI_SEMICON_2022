@@ -42,8 +42,10 @@ module TOP(
 
     output wire [`DATA_WIDTH-1:0]       sa_data_rdata_o,
     output wire [`DATA_WIDTH-1:0]       fc_data_rdata_o,
-    output wire [9:0]                   pool_address_rdata_o
+    output wire [9:0]                   pool_address_rdata_o,
 
+    output wire [15:0]                  pool_last_o,
+    output wire                         act_last_o
 );
 
     reg start_sa;
@@ -115,7 +117,9 @@ module TOP(
         .pool_address_rdptr_i(pool_address_rdptr_i),
         .sa_data_rdata_o(sa_data_rdata_o),
         .fc_data_rdata_o(fc_data_rdata_o),
-        .pool_address_rdata_o(pool_address_rdata_o)
+        .pool_address_rdata_o(pool_address_rdata_o),
+        .pool_last_o(pool_last_o),
+        .act_last_o(act_last_o)
     );
 
 endmodule

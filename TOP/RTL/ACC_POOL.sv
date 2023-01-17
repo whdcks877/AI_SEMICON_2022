@@ -38,13 +38,25 @@ module ACC_POOL(
 
     output wire [`DATA_WIDTH-1:0]       sa_data_rdata_o,
     output wire [`DATA_WIDTH-1:0]       fc_data_rdata_o,
-    output wire [9:0]                   pool_address_rdata_o
+    output wire [9:0]                   pool_address_rdata_o,
+
+    output wire [15:0]                  pool_last_o,
+    output wire                         act_last_o
 );
 
     wire                           act_last [`ACC_NUM  + `FA_NUM];
     wire                           act_valid [`ACC_NUM  + `FA_NUM];
     wire  [`DATA_WIDTH-1:0]        act_result [`ACC_NUM  + `FA_NUM];
     wire  [`ADDRESS_WIDTH-1:0]     act_result_address [`ACC_NUM];
+
+    wire  [15:0]                    pool_last;
+    wire    pool_last_p [16];
+    genvar i;
+    generate
+        for(i = 0; i<16; i++) begin
+            assign pool_last[i] = pool_last_p[15-i];
+        end
+    endgenerate
 
  ACC_ACTIVE u_acc_active(
     .clk(clk),
@@ -88,9 +100,13 @@ module ACC_POOL(
         .addrb_d_fc(fc_data_rdptr_i),                          //data(fc) bram read address
         .enb_a(pool_address_rden_i),                                                         //address bram read enable
         .addrb_a(pool_address_rdptr_i),           //address bram read address
+        .act_last_o(act_last_o),
+        .pool_last_o(pool_last_p),
         .dob_d_sa(sa_data_rdata_o),                                     //data(sa) bram output
         .dob_d_fc(fc_data_rdata_o),                                     //data(fc) bram output
         .dob_a(pool_address_rdata_o)                                         //address bram output
     );
+
+    assign pool_last_o = pool_last;
 
 endmodule

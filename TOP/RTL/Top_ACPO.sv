@@ -20,17 +20,19 @@ module Top_ACPO #(
     input                       [ADDRESS_WIDTH-1:0] acc_result_address_i [ACC_NUM],
 
     input                       enb_d_sa,                                                     //data(sa) bram read enable
-    input                       [$clog2(SRAM_DEPTH)+$clog2(BAND_WIDTH)-1:0] addrb_d_sa,       //data(sa) bram read address 10+4-1 = 13:0
+    input                       [$clog2(SRAM_DEPTH)+$clog2(BAND_WIDTH)-1:0] addrb_d_sa,       //data(sa) bram read address
  
     input                       enb_d_fc,                                                     //data(fc) bram read enable
-    input                       [$clog2(SRAM_DEPTH)-1:0] addrb_d_fc,                          //data(fc) bram read address 9:0
+    input                       [$clog2(SRAM_DEPTH)-1:0] addrb_d_fc,                          //data(fc) bram read address
 
     input                       enb_a,                                                         //address bram read enable
-    input                       [$clog2(SRAM_DEPTH)+$clog2(BAND_WIDTH)-1:0] addrb_a,           //address bram read address 13:0
+    input                       [$clog2(SRAM_DEPTH)+$clog2(BAND_WIDTH)-1:0] addrb_a,           //address bram read address
 
+    output                      act_last_o,
+    output                      pool_last_o [POOL_NUM],
     output                      [DATA_WIDTH-1:0] dob_d_sa,                                     //data(sa) bram output
     output                      [DATA_WIDTH-1:0] dob_d_fc,                                     //data(fc) bram output
-    output                      [9:0] dob_a                                         //address bram output
+    output                      [9:0] dob_a                                                    //address bram output
 );
 
     wire                        act_last [ACC_NUM + FA_NUM];
@@ -42,11 +44,9 @@ module Top_ACPO #(
     wire                        act_valid_16 [ACC_NUM];
     wire                        [DATA_WIDTH-1:0] act_result_16 [ACC_NUM];
 
-    wire                        act_last_fc;
     wire                        act_valid_fc;
     wire                        [DATA_WIDTH-1:0] act_result_fc;
 
-    wire                        pool_last [POOL_NUM];
     wire                        pool_valid [POOL_NUM];
     wire                        [DATA_WIDTH-1:0] pool_result [POOL_NUM];
     wire                        [ADDRESS_WIDTH-1:0] pool_result_address [POOL_NUM];
@@ -74,7 +74,7 @@ module Top_ACPO #(
         .act_valid_i(act_valid_16),                               
         .act_result_i(act_result_16),                               
         .act_result_address_i(act_result_address),                               
-        .pool_last_o(pool_last),                               
+        .pool_last_o(pool_last_o),                               
         .pool_valid_o(pool_valid),                               
         .pool_result_o(pool_result),                               
         .pool_result_address_o(pool_result_address)
@@ -130,7 +130,7 @@ module Top_ACPO #(
     assign act_valid_16                 = act_valid[0:15];    
     assign act_result_16                = act_result[0:15];       
 
-    assign act_last_fc                   = act_last[16];                
+    assign act_last_o                    = act_last[16];                
     assign act_valid_fc                  = act_valid[16]; 
     assign act_result_fc                 = act_result[16];
 
