@@ -28,9 +28,11 @@ module Top_ACPO #(
     input                       enb_a,                                                         //address bram read enable
     input                       [$clog2(SRAM_DEPTH)+$clog2(BAND_WIDTH)-1:0] addrb_a,           //address bram read address
 
+    output                      act_last_o
+    output                      pool_last_o [POOL_NUM],
     output                      [DATA_WIDTH-1:0] dob_d_sa,                                     //data(sa) bram output
     output                      [DATA_WIDTH-1:0] dob_d_fc,                                     //data(fc) bram output
-    output                      [9:0] dob_a                                         //address bram output
+    output                      [9:0] dob_a                                                    //address bram output
 );
 
     wire                        act_last [ACC_NUM + FA_NUM];
@@ -42,11 +44,9 @@ module Top_ACPO #(
     wire                        act_valid_16 [ACC_NUM];
     wire                        [DATA_WIDTH-1:0] act_result_16 [ACC_NUM];
 
-    wire                        act_last_fc;
     wire                        act_valid_fc;
     wire                        [DATA_WIDTH-1:0] act_result_fc;
 
-    wire                        pool_last [POOL_NUM];
     wire                        pool_valid [POOL_NUM];
     wire                        [DATA_WIDTH-1:0] pool_result [POOL_NUM];
     wire                        [ADDRESS_WIDTH-1:0] pool_result_address [POOL_NUM];
@@ -61,7 +61,7 @@ module Top_ACPO #(
         .acc_valid_i(acc_valid_i),
         .acc_result_i(acc_result_i),
         .acc_result_address_i(acc_result_address_i),
-        .act_last_o(act_last),
+        .act_last_o(act_last_o),
         .act_valid_o(act_valid),
         .act_result_o(act_result),
         .act_result_address_o(act_result_address) 
@@ -74,7 +74,7 @@ module Top_ACPO #(
         .act_valid_i(act_valid_16),                               
         .act_result_i(act_result_16),                               
         .act_result_address_i(act_result_address),                               
-        .pool_last_o(pool_last),                               
+        .pool_last_o(pool_last_o),                               
         .pool_valid_o(pool_valid),                               
         .pool_result_o(pool_result),                               
         .pool_result_address_o(pool_result_address)
