@@ -28,7 +28,7 @@ module Top_ACPO #(
     input                       enb_a,                                                         //address bram read enable
     input                       [$clog2(SRAM_DEPTH)+$clog2(BAND_WIDTH)-1:0] addrb_a,           //address bram read address
 
-    output                      act_last_o
+    output                      act_last_o,
     output                      pool_last_o [POOL_NUM],
     output                      [DATA_WIDTH-1:0] dob_d_sa,                                     //data(sa) bram output
     output                      [DATA_WIDTH-1:0] dob_d_fc,                                     //data(fc) bram output
@@ -61,7 +61,7 @@ module Top_ACPO #(
         .acc_valid_i(acc_valid_i),
         .acc_result_i(acc_result_i),
         .acc_result_address_i(acc_result_address_i),
-        .act_last_o(act_last_o),
+        .act_last_o(act_last),
         .act_valid_o(act_valid),
         .act_result_o(act_result),
         .act_result_address_o(act_result_address) 
@@ -130,7 +130,7 @@ module Top_ACPO #(
     assign act_valid_16                 = act_valid[0:15];    
     assign act_result_16                = act_result[0:15];       
 
-    assign act_last_fc                   = act_last[16];                
+    assign act_last_o                    = act_last[16];                
     assign act_valid_fc                  = act_valid[16]; 
     assign act_result_fc                 = act_result[16];
 
