@@ -56,6 +56,7 @@ module tb_TOP_wrapped();
         .ifmap_ch_i(ifmap_ch_i),
         .in_node_num_i(in_node_num_i), 
         .out_node_num_i(out_node_num_i),
+        .done(),
         .addr_a(addr_a),
         .wrdata_a(wrdata_a),
         .rddata_a(rddata_a),
@@ -81,6 +82,9 @@ module tb_TOP_wrapped();
             we_a = 'b0;
             start                   = 1'b0;
             nth_conv_i              = 'd0;
+            ofmap_size_i = `OFMAP_SIZE_SQRT;
+            ifmap_ch_i = `CH_SIZE;
+            
 
             rst_n                   = 1'b0;
             repeat (3) @(posedge clk);
@@ -106,7 +110,7 @@ module tb_TOP_wrapped();
         
         for(int i = 0; i<6; i++) begin
             for(int j=0; j<25; j++) begin
-                addr_a <= ((`TAG_SA<<17) + (1<<16) + (i<<11) + j)<<2;
+                addr_a <= ((`TAG_SA<<17) + (1<<16) + (i<<6) + j)<<2;
                 wrdata_a <= filter[i][24-j];
                 we_a                <= 4'hf;;
                 @(posedge clk);

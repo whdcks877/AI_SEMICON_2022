@@ -11,6 +11,8 @@ module top_wrapped(
 
     input   wire    [6:0]   in_node_num_i, //fully connected configure
     input   wire    [6:0]   out_node_num_i,
+    
+    output wire [17:0] done,
 
     //bram controller
     input   wire [21:0] addr_a,

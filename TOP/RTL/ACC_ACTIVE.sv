@@ -1,5 +1,3 @@
-`include "..\..\Accumulator\SRC\Accumulator_x16.sv"
-`include "..\..\FullyConnected\RTL\FullyConnected.sv"
 
 `define ACC_NUM 16
 `define FA_NUM 1
