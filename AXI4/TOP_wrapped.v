@@ -12,7 +12,7 @@ module top_wrapped(
     input   wire    [6:0]   in_node_num_i, //fully connected configure
     input   wire    [6:0]   out_node_num_i,
     
-    output wire [17:0] done,
+    output wire [16:0] done, // 17: fc_last, 16~0 : pool_last 
 
     //bram controller
     input   wire [21:0] addr_a,
@@ -53,6 +53,9 @@ module top_wrapped(
     wire                          pool_address_rden;
     wire  [13:0]                  pool_address_rdptr;
 
+    wire  [16:0]                    pool_last;
+    wire                            act_last;                  
+
     TOP u_top(
         .clk(clk),
         .rst_n(rst_n),
@@ -79,7 +82,9 @@ module top_wrapped(
         .pool_address_rdptr_i(pool_address_rdptr),
         .sa_data_rdata_o(sa_data_rdata),
         .fc_data_rdata_o(fc_data_rdata),
-        .pool_address_rdata_o(pool_address_rdata)
+        .pool_address_rdata_o(pool_address_rdata),
+        .pool_last_o(pool_last),
+        .act_last_o(act_last)
     );
 
     addr_decoder u_dut(
@@ -108,4 +113,6 @@ module top_wrapped(
         .pool_address_rden_o(pool_address_rden),
         .pool_address_rdptr_o(pool_address_rdptr)
     );
+
+    assign done = {act_last,pool_last};
 endmodule
