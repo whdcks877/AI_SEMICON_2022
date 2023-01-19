@@ -4,7 +4,7 @@ interface fc_w_buf_if(
 );
 
     logic rst_n;
-    logic [6:0] rdptr_i;
+    logic [9:0] rdptr_i;
     logic [16:0] wrptr_i;
     logic rden_i;
     logic wren_i;

@@ -5,8 +5,8 @@ module fc_weight_buf(
     input wire rst_n,
     input wire rst_all,
 
-    input wire [6:0] rdptr_i,
-    //input wire [6:0] wrptr_i [120],
+    input wire [9:0] rdptr_i,
+    //input wire [9:0] wrptr_i [120],
     input wire [16:0] wrptr_i,
     input wire rden_i,
     input wire wren_i,
@@ -15,12 +15,12 @@ module fc_weight_buf(
     output wire [7:0] weight_o [120]
 );
 
-    reg [6:0] ptr [120];
-    reg [6:0] rdptr_reg [119]; 
+    reg [9:0] ptr [120];
+    reg [9:0] rdptr_reg [119]; 
     reg rden_reg [119];
     reg rst_n_reg [119];
-    wire [6:0] wrptr = wrptr_i[6:0];
-    wire [6:0] bram_sel = wrptr_i[16:10];
+    wire [9:0] wrptr = wrptr_i[9:0];
+    wire [9:0] bram_sel = wrptr_i[16:10];
 
     always_ff @(posedge clk) begin
         if(!rst_all) begin
@@ -43,7 +43,7 @@ module fc_weight_buf(
     end
 
 
-    rams_sp_rf_rst #(.SRAM_DEPTH(84), .DATA_WIDTH(8)) buf0(
+    rams_sp_rf_rst #(.SRAM_DEPTH(1024), .DATA_WIDTH(8)) buf0(
                 .clk(clk),
                 .en(rden_i),
                 .we(wren_i && (bram_sel == 7'd0)),
@@ -57,7 +57,7 @@ module fc_weight_buf(
     genvar i;
     generate
         for(i=1; i<120; i++) begin
-            rams_sp_rf_rst #(.SRAM_DEPTH(84), .DATA_WIDTH(8)) u_buf(
+            rams_sp_rf_rst #(.SRAM_DEPTH(1024), .DATA_WIDTH(8)) u_buf(
                 .clk(clk),
                 .en(rden_reg[i-1]),
                 .we(wren_i && (bram_sel == i)),

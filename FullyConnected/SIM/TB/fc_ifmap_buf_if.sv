@@ -5,8 +5,8 @@ interface fc_ifmap_buf_if(
 
     logic rden_i;
     logic wren_i;
-    logic [6:0] rdptr_i;
-    logic [6:0] wrptr_i;
+    logic [9:0] rdptr_i;
+    logic [9:0] wrptr_i;
     byte ifmap_i;
     byte ifmap_o;
 
@@ -18,7 +18,7 @@ interface fc_ifmap_buf_if(
         ifmap_i = 0;
     endtask
 
-    task automatic write_ram(input logic [6:0] addr, input byte data);
+    task automatic write_ram(input logic [9:0] addr, input byte data);
         wren_i = 1;
         wrptr_i = addr;
         ifmap_i = data;
