@@ -1,16 +1,9 @@
-// Input Data Buff Unit
-// 1 write port, multi read ports
-// dual write-read
-
-// Authors:
-// - Sangmin Park
-// v1.2(reviced by JY Lee)
-// Version Updated:
-// - 20220112
+//version 2022-01-19
+//editor IM SUHYEOK
 
 module weight_bram #
 (
-    parameter SRAM_DEPTH=50,
+    parameter SRAM_DEPTH=256,
     parameter BAND_WIDTH=16,
     parameter DATA_WIDTH=8
 )
@@ -18,8 +11,8 @@ module weight_bram #
     input   wire  clk,
     input   wire  wea,
     input   wire  enb[15:0],
-    input   wire  [$clog2(SRAM_DEPTH)+$clog2(BAND_WIDTH)-1:0] addra,         // MSB[$clog2(SRAM_DEPTH)+4:$clog2(SRAM_DEPTH)]: selecting which block among 25 BRAMs
-    input   wire  [$clog2(SRAM_DEPTH)-1:0] addrb[15:0],                // LSB[$clog2(SRAM_DEPTH)-1:0]: selecting in one BRAM
+    input   wire  [$clog2(SRAM_DEPTH)+$clog2(BAND_WIDTH)-1:0] addra,        // MSB[$clog2(SRAM_DEPTH)+4:$clog2(SRAM_DEPTH)]: selecting which block among 25 BRAMs
+    input   wire  [$clog2(SRAM_DEPTH)-1:0] addrb[15:0],                     // LSB[$clog2(SRAM_DEPTH)-1:0]: selecting in one BRAM
     
     input   reg   [DATA_WIDTH-1:0]  dia,
     output  reg   [DATA_WIDTH-1:0]  dob[15:0]

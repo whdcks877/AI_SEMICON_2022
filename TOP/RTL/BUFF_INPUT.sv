@@ -4,13 +4,13 @@
 
 // Authors:
 // - Sangmin Park
-// v1.1
+// v2.2
 // Version Updated:
-// - 20220106
+// - 20220119
 
 module BUFF_INPUT #
 (
-    parameter SRAM_DEPTH=1024,
+    parameter SRAM_DEPTH=1176,
     parameter BAND_WIDTH=25,
     parameter DATA_WIDTH=8
 )
@@ -37,7 +37,7 @@ module BUFF_INPUT #
             u_ram
             (
                 .clk                    (clk),
-                .wea                    (wea && (BLOCK_NUMa == i)),
+                .wea                    (wea),
         
                 .enb                    (enb[i]),
                 .addra                  (addra[$clog2(SRAM_DEPTH)-1:0]),

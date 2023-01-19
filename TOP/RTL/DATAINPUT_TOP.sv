@@ -3,9 +3,9 @@
 
 // Authors:
 // - Sangmin Park
-// v2.1
+// v2.2
 // Version Updated:
-// - 20220114
+// - 20220119
 
 module DATAINPUT_TOP #
 (
@@ -23,17 +23,20 @@ module DATAINPUT_TOP #
     input   wire    [DATA_WIDTH-1:0]  dia,
 
     //DATA Setup
-    input   wire        [10:0]              BURST_SIZE,
+    input   wire        [1:0]               nth_conv_i,
     input   wire        [4:0]               ofmap_size_i,
     input   wire                            weight_ready_i,
     output  wire                            data_valid_o[BAND_WIDTH],   // SETUP >> SA valid
     output  wire        [DATA_WIDTH-1:0]    sa_data_o[BAND_WIDTH],      // SETUP >> SA data
-    output  wire                            burst_last_o    
+    output  wire                            burst_last_o,
+    output  wire                            conv_done_o    
 );
 
     wire            [DATA_WIDTH-1:0]        dob[BAND_WIDTH];
     wire                                    enb[BAND_WIDTH];
     wire            [$clog2(SRAM_DEPTH)-1:0] addrb[BAND_WIDTH];
+
+    
 
 
     BUFF_INPUT #
@@ -58,7 +61,7 @@ module DATAINPUT_TOP #
     u_setup(
         .clk                        (clk),
         .rst                        (rst),
-        .BURST_SIZE                 (BURST_SIZE),
+        .nth_conv_i                 (nth_conv_i),
         .ofmap_size_i               (ofmap_size_i),
         .buff_data_i                (dob),
         .setup_ready_o              (enb),
@@ -67,7 +70,8 @@ module DATAINPUT_TOP #
         .weight_ready_i             (weight_ready_i),
         .data_valid_o               (data_valid_o),
         .sa_data_o                  (sa_data_o),
-        .burst_last_o               (burst_last_o)
+        .burst_last_o               (burst_last_o),
+        .conv_done_o                (conv_done_o)
     );
 
 

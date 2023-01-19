@@ -1,23 +1,25 @@
 // Systolic Array Data Setup Unit
 // Authors:
 // - Sangmin Park
-// v2.1
+// v2.2
 // Version Updated:
-// - 20220114
+// - 20220119
 
 module DATA_SETUP #(
     // parameter       BURST_SIZE      = 1024,         // BURST_SIZE = 1024 (32x32 MATRIX)
-    parameter       SRAM_DEPTH      = 1024,         // DEPTH of BRAM
+    parameter       SRAM_DEPTH      = 1176,         // DEPTH of BRAM
     parameter       BAND_WIDTH      = 25,           // BAND_WIDTH=25 (5x5 Weight)
-    parameter       DATA_WIDTH      = 8             // 8bit Integer
-    )
+    parameter       DATA_WIDTH      = 8,             // 8bit Integer
+    parameter       CH_NUM          = 6
+)
 (
     input   wire                clk,
     input   wire                rst,
 
     //IF with CFG
-    input   wire        [10:0]              BURST_SIZE,                 // conv1: 32*32*1=1024, conv2: 14*14*6=1176, conv3: 5*5*16=400
-    input   wire        [4:0]               ofmap_size_i,               // conv1: 28, conv2: 10, conv3: 1
+    input   wire        [1:0]               nth_conv_i,                 // conv1: 32*32*1=1024, conv2: 14*14*6=1176, conv3: 5*5*16=400
+    input   wire        [4:0]               ofmap_size_i,               // conv1: 28, conv2: 10, conv3: 1]
+    output  reg         [2:0]               cnt_ch,
      
     //IF with BRAM   25 bus
     input   wire        [DATA_WIDTH-1:0]    buff_data_i[BAND_WIDTH],
@@ -28,9 +30,11 @@ module DATA_SETUP #(
     input   wire                            weight_ready_i,             // when all weight set up on PEs
     output  wire                            data_valid_o[BAND_WIDTH],   // SETUP >> SA valid
     output  wire        [DATA_WIDTH-1:0]    sa_data_o[BAND_WIDTH],      // SETUP >> SA data
-    output  wire                            burst_last_o                // when BURST_SIZE + BANDWIDTH - 1 (1024+25-1 = 1048)th Data sending done
-  
+    output  wire                            burst_last_o,               // when BURST_SIZE + BANDWIDTH - 1 (1024+25-1 = 1048)th Data sending done
+    output  wire                            conv_done_o
 );
+
+    reg                                 conv_done;
 
     reg             [5:0]               INPUT_SIZE;
     assign  INPUT_SIZE = ofmap_size_i + 'd4;
@@ -38,17 +42,19 @@ module DATA_SETUP #(
     reg             [16:0]              zero_mark;                      // 0~1023 BURST count, Maximum count 2^17
     reg             [7:0]               last_cnt;                       // 0~24 WEIGHT count at the very last outputs, Maximum count 2^7
     reg                                 dir;                            // Direction 0: Opening Data set from 0 to 24  >> Direction 1: Closing Data set from 0 to 24
-    reg             [$clog2(SRAM_DEPTH)-1:0] buff_addr[BAND_WIDTH], buff_addr_n[1:BAND_WIDTH];
+    reg             [$clog2(SRAM_DEPTH)-1:0] buff_addr[BAND_WIDTH];
 
     reg                                 data_valid[BAND_WIDTH],   data_valid_n[BAND_WIDTH];
     reg                                 setup_ready[BAND_WIDTH];
     reg             [DATA_WIDTH-1:0]    sa_data[BAND_WIDTH];
 
-    reg             [2:0]               cnt_5, cnt_v;                   // 5 bit counter
+    reg             [2:0]               cnt_5, cnt_ch;                  // 5 bit counter, 6 bit counter
     reg             [4:0]               addrh_offset;                   // horizontal, vertical offset max 28 counter
     reg             [10:0]              addrv_offset;
 
 
+    wire            [10:0]              BURST_SIZE      = ofmap_size_i * ofmap_size_i;
+    wire            [10:0]              ch_offset       = INPUT_SIZE * INPUT_SIZE * cnt_ch;
     // Buffer 8b x 1 x 25
 
     always_ff @(posedge clk)
@@ -65,13 +71,14 @@ module DATA_SETUP #(
             sa_data[i]          <= 'd0;
             data_valid_n[i]     <= 1'b0;
         end
+        cnt_ch                  <= 'd0;
     end
     else begin
         if(weight_ready_i) begin
             // Packing-Unpacking
             if(!dir) begin
                 setup_ready[0]              <= 1'b1;
-                buff_addr[0]                <= (addrv_offset) + (addrh_offset);
+                buff_addr[0]                <= (addrv_offset) + (addrh_offset) + ch_offset;
             end
             else begin
                 setup_ready[0]              <= 1'b0;
@@ -136,15 +143,15 @@ module DATA_SETUP #(
         end
         if(cnt_5 == 'd4) begin
             cnt_5               <= 'd0;
-
-            if(addrv_offset == ofmap_size_i - 'd1) begin
-                addrv_offset        <= 'd0;
-            end
         end
-
         if(addrh_offset == ofmap_size_i - 'd1) begin
             addrh_offset        <= 'd0;
-            addrv_offset        <= addrv_offset + INPUT_SIZE;
+            if(addrv_offset < (INPUT_SIZE * INPUT_SIZE)) begin
+                addrv_offset        <= addrv_offset + INPUT_SIZE;
+            end
+            else begin
+                addrv_offset        <= 'd0;    
+            end
         end
         
         
@@ -162,11 +169,40 @@ module DATA_SETUP #(
                 sa_data[i]          <= 'd0;
                 data_valid_n[i]     <= 1'b0;
             end
+
+            if(nth_conv_i == 'd0) begin
+                cnt_ch              <= 'd0;
+            end
+            else if(nth_conv_i == 'd1) begin
+                if(cnt_ch < CH_NUM) begin
+                    cnt_ch              <= cnt_ch + 'd1;
+                end
+                else begin
+                    cnt_ch              <= 'd0;
+                end
+            end
+            
         end
     end
 
+    always_comb begin
+        if(nth_conv_i == 'd0) begin
+            conv_done                   = burst_last_o;
+        end
+        else if(nth_conv_i == 'd1) begin
+            if(cnt_ch == CH_NUM - 'd1)begin
+                conv_done               = burst_last_o;
+            end
+            else begin
+                conv_done               = 'b0;
+            end
+        end
+    end
+
+
     assign  buff_addr_o         = buff_addr;
     assign  burst_last_o        = last_cnt == (BAND_WIDTH + 'd1);
+    assign  conv_done_o         = (nth_conv_i == 'd0) ? burst_last_o : (burst_last_o && (cnt_ch == CH_NUM - 'd1));
     assign  data_valid_o        = data_valid;
     assign  setup_ready_o       = setup_ready;
     assign  sa_data_o           = sa_data;

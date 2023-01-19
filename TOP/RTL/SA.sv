@@ -20,7 +20,7 @@ module SA
 
     //ctrl interface
     input   wire                weight_stop,
-    input   wire                nth_conv_i,
+    input   wire    [1:0]       nth_conv_i,
     //accumulator interface
     output  reg     [7:0]       accu_data_o[15:0],
     output  reg                 accu_valid[15:0]
@@ -6488,7 +6488,7 @@ module SA
             accu_valid[3] <= accu_valid[2];
             accu_valid[4] <= accu_valid[3];
             accu_valid[5] <= accu_valid[4];
-            if(nth_conv_i) begin
+            if(nth_conv_i == 2'b1) begin
                 accu_valid[6] <= accu_valid[5];
                 accu_valid[7] <= accu_valid[6];
                 accu_valid[8] <= accu_valid[7];

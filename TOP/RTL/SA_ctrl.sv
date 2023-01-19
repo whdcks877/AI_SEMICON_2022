@@ -1,119 +1,105 @@
-// SA Controller
-// JY Lee
-// Version 2023-01-10 1st verified
-// 2023-01-12 2nd verified
-// 2023-01-13 3rd verified by JY Lee
+//version 2022-01-19
+//editor IM SUHYEOK
 
 module SA_ctrl
 (
-    input   wire        clk,
-    input   wire        rst_n,
-    //config
-    input   wire        start,
-    input   wire        nth_conv_i,
-    //data setup
-    input   wire        data_last,
-    input   wire        d_valid_i,
-    output  reg         data_enable,
-    //weight buffer
-    output  reg         nth_conv_o,       //0=1th conv(6 filters), 1=2nd conv(16th filter)
-    output  reg         weight_start,
-    //SA
-    output  reg         weight_stop
+    input   wire                        clk,
+    input   wire                        rst_n,
+    input   wire                        start_i,        
+    input   wire                        data_last_i,
+    input   wire                        [1:0] nth_conv_i,
+    input   wire                        conv_done_i,
+    output  wire                        data_enable_o,          //data setup
+    output  wire                        weight_start_o,         //weight buffer
+    output  wire                        weight_stop_o           //SA
 );
-    reg     [1:0]       state,      state_n;
-    reg                 data_enable_n;
-    reg                 nth_conv_n;
-    reg     [4:0]       cnt,        cnt_n;
-    reg                 weight_start_n;
-    reg                 weight_stop_n;
 
-    localparam          S_IDLE      =   2'd0,
-                        S_1th_Conv  =   2'd1,
-                        S_2nd_Conv  =   2'd2;
-    //FSM IDLE, 1th Conv, 2nd Conv
+    localparam          S_IDLE      = 2'd0,
+                        S_CONV      = 2'd1,
+                        S_CONV_N    = 2'd2,
+                        S_CONV2_N   = 2'd3;
+
+    reg                 [1:0] state, state_n;
+    reg                 data_enable;
+    reg                 [4:0] cnt, cnt_n;
+    reg                 weight_start;
+    reg                 weight_stop;
+
 
     always_ff @(posedge clk) begin
         if(!rst_n) begin
             state <= S_IDLE;
-            data_enable <= 1'b0;
-            weight_stop <= 1'b1;
-            nth_conv_o <= 1'b0;
             cnt <= 5'd0;
-            weight_start <= 1'b0;
         end
         else begin
             state <= state_n;
-            data_enable <= data_enable_n;
-            weight_stop <= weight_stop_n;
-            nth_conv_o <= nth_conv_n;
             cnt <= cnt_n;
-            weight_start <= weight_start_n;
         end
     end
 
     always_comb begin
+        data_enable = 1'b0;
+        weight_start = 1'b0;
         state_n = state;
-        weight_stop_n = weight_stop;
-        data_enable_n = data_enable;
-        nth_conv_n = nth_conv_i;
-        cnt_n = cnt;
-        weight_start_n = weight_start;
+        cnt_n   = cnt;
 
         case(state)
             S_IDLE: begin
-                if(start) begin
-                    state_n = nth_conv_i ? S_2nd_Conv : S_1th_Conv;
-                    weight_stop_n = 1'b0;
-                    weight_start_n = 1'b1;
-                    data_enable_n = 1'b0;
+                weight_stop = 1'b0;
+                if(start_i) begin
+                    state_n = S_CONV;
+                    weight_start = 1'b1;
                 end
             end
-            S_1th_Conv: begin
-                //6 filters     
-                if(!data_enable)
-                    cnt_n = cnt + 'd1;
+            S_CONV: begin
+                cnt_n = cnt + 'd1;
+                if(cnt < 'd27) begin
+                    weight_stop = 1'b0;
+                end
                 else begin
-                    state_n = data_last ? S_IDLE : S_1th_Conv;
-                    data_enable_n = data_last ? 1'b0 : 1'b1;
+                    weight_stop = 1'b1;
                 end
+
                 if(cnt == 'd26) begin
-                    weight_start_n = 1'b0;
+                    weight_start = 1'b0;
                 end
 
-                if(cnt == 'd28) begin   //cnt can change by BRAM RL, maybe 26 or 27
-                    weight_stop_n = 1'b1;
-                    
-                end
-                if(cnt == 'd29) begin
+                if(cnt == 'd28) begin
                     cnt_n = 'd0;
-                    data_enable_n = 1'b1;
+                    data_enable = 1'b1;
+                    if (nth_conv_i == 0) begin
+                        state_n = S_CONV_N;
+                    end 
+                    else begin
+                        state_n = S_CONV2_N;
+                    end
                 end
-
             end
-            S_2nd_Conv: begin
-                //16 filters     
-                if(!data_enable)
-                    cnt_n = cnt + 'd1;
+            S_CONV_N: begin
+                data_enable = 1'b1;
+                if(conv_done_i) begin
+                    data_enable = 1'b0;
+                    state_n = S_IDLE;
+                end
+            end
+            S_CONV2_N : begin
+                if(!conv_done_i) begin
+                    data_enable = 1'b1;
+                    if(data_last_i) begin
+                        data_enable = 1'b0;
+                        state_n = S_CONV;
+                    end
+                end
                 else begin
-                    state_n = data_last ? S_IDLE : S_1th_Conv;
-                    data_enable_n = data_last ? 1'b0 : 1'b1;
+                    data_enable = 1'b0;
+                    state_n = S_IDLE;
                 end
-                if(cnt == 'd26) begin
-                    weight_start_n = 1'b0;
-                end
-
-                if(cnt == 'd28) begin   //cnt can change by BRAM RL, maybe 26 or 27
-                    weight_stop_n = 1'b1;
-                    
-                end
-                if(cnt == 'd29) begin
-                    cnt_n = 'd0;
-                    data_enable_n = 1'b1;
-                end
-            end
+            end    
         endcase
     end
 
+    assign data_enable_o        = data_enable;
+    assign weight_stop_o        = weight_stop;
+    assign weight_start_o       = weight_start;
 
 endmodule
