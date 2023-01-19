@@ -9,7 +9,7 @@ module top_wrapped(
     input wire  [4:0]                   ofmap_size_i,
     input wire  [5:0]                   ifmap_ch_i,
 
-    input   wire    [6:0]   in_node_num_i, //fully connected configure
+    input   wire    [8:0]   in_node_num_i, //fully connected configure
     input   wire    [6:0]   out_node_num_i,
     
     output wire [16:0] done, // 17: fc_last, 16~0 : pool_last 
@@ -40,7 +40,7 @@ module top_wrapped(
     wire  [7:0]                   wbuf_wdata;
 
     wire                          ifmap_wren;
-    wire  [6:0]                   ifmap_wrptr;
+    wire  [9:0]                   ifmap_wrptr;
     wire  [7:0]                   ifmap_wdata;
     
     //pooling

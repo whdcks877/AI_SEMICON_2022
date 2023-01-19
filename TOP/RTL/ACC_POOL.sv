@@ -16,15 +16,16 @@ module ACC_POOL(
     input wire  [5:0]                   ifmap_ch_i,
 
     input wire                          start_fc_i,
-    input wire  [6:0]                   in_node_num_i,
+    input wire  [8:0]                   in_node_num_i,
     input wire  [6:0]                   out_node_num_i,
+    input wire  [1:0]                   nth_fully_i,
 
     input wire                          wbuf_wren_i,
     input wire  [16:0]                  wbuf_wrptr_i,
     input wire  [7:0]                   wbuf_wdata_i,
 
     input wire                          ifmap_wren_i,
-    input wire  [6:0]                   ifmap_wrptr_i,
+    input wire  [9:0]                   ifmap_wrptr_i,
     input wire  [7:0]                   ifmap_wdata_i,
 
     input wire                          sa_data_rden_i,
@@ -68,6 +69,7 @@ module ACC_POOL(
     .start_fc_i(start_fc_i),
     .in_node_num_i(in_node_num_i),
     .out_node_num_i(out_node_num_i),
+    .nth_fully_i(nth_fully_i),
     .wbuf_wren_i(wbuf_wren_i),
     .wbuf_wrptr_i(wbuf_wrptr_i),
     .wbuf_wdata_i(wbuf_wdata_i),

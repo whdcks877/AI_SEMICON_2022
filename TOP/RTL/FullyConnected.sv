@@ -8,8 +8,9 @@ module FullyConnected (
     input wire          rst_n,
 
     input wire          start_i, //input after buffers are filled, FC operate start
-    input wire [6:0]    in_node_num_i, //number of input node, 1~128
+    input wire [8:0]    in_node_num_i, //number of input node, 1~128
     input wire [6:0]    out_node_num_i, //number of output node, 1~84
+    input wire [1:0]    nth_fully_i,
 
     //write port  for weight buffer
     input wire          wbuf_wren_i,
@@ -18,7 +19,7 @@ module FullyConnected (
 
     //write port for ifmap buffer
     input wire          ifmap_wren_i,
-    input wire [6:0]    ifmap_wrptr_i,
+    input wire [9:0]    ifmap_wrptr_i,
     input wire [7:0]    ifmap_wdata_i,
 
     //interface with activation
@@ -28,10 +29,10 @@ module FullyConnected (
 
 );
     wire        ifmap_rden;
-    wire [6:0]  ifmap_rdptr;
+    wire [9:0]  ifmap_rdptr;
 
     wire        wbuf_rden;
-    wire [6:0]  wbuf_rdptr;
+    wire [9:0]  wbuf_rdptr;
     wire        rst_buf_n;
 
     wire [7:0]  weight [`FC_SIZE];
@@ -44,7 +45,8 @@ module FullyConnected (
         .rst_n(rst_n),
         .start_i(start_i), 
         .in_node_num_i(in_node_num_i), 
-        .out_node_num_i(out_node_num_i), 
+        .out_node_num_i(out_node_num_i),
+        .nth_fully_i(nth_fully_i),
         .ifmap_rden_o(ifmap_rden),
         .ifmap_rdptr_o(ifmap_rdptr),
         .wbuf_rden_o(wbuf_rden),

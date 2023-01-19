@@ -84,7 +84,7 @@
         .ofmap_size_o(ofmap_size_o),
         .ifmap_ch_o(ifmap_ch_o),
         .in_node_num_o(in_node_num_o),
-        .out_node_num_o(out_node_num_o)
+        .out_node_num_o(out_node_num_o),
 	);
 
 	// Add user logic here

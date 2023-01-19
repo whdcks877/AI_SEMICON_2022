@@ -29,7 +29,7 @@ module addr_decoder(
     output wire  [7:0]                   wbuf_wdata_o,
 
     output wire                          ifmap_wren_o,
-    output wire  [6:0]                   ifmap_wrptr_o,
+    output wire  [9:0]                   ifmap_wrptr_o,
     output wire  [7:0]                   ifmap_wdata_o,
     
     //pooling
@@ -60,7 +60,7 @@ module addr_decoder(
     reg  [7:0]                   wbuf_wdata;
 
     reg                          ifmap_wren;
-    reg  [6:0]                   ifmap_wrptr;
+    reg  [9:0]                   ifmap_wrptr;
     reg  [7:0]                   ifmap_wdata;
 
     reg                          sa_data_rden;
@@ -102,7 +102,7 @@ module addr_decoder(
                 end
                 `TAG_FC_INPUT: begin
                     ifmap_wren = 1'b1;
-                    ifmap_wrptr = addr[6:0];
+                    ifmap_wrptr = addr[9:0];
                     ifmap_wdata = wrdata_a[7:0];
                 end
             endcase

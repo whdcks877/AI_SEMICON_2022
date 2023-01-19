@@ -443,6 +443,7 @@
     end
 
     assign start = start_ff[1:0];
+
     assign nth_conv_o = slv_reg1[15:14];
     assign ofmap_size_o = slv_reg1[20:16];
     assign ifmap_ch_o = slv_reg1[26:21];

@@ -17,7 +17,7 @@ module tb_TOP_wrapped();
     logic  [4:0]                   ofmap_size_i;
     logic  [5:0]                   ifmap_ch_i;
 
-    logic    [6:0]   in_node_num_i; 
+    logic    [8:0]   in_node_num_i; 
     logic    [6:0]   out_node_num_i;
 
     logic [21:0] addr_a;
@@ -99,12 +99,11 @@ module tb_TOP_wrapped();
          for (int i =0; i<25; i++) begin
             for(int j=0; j<1024; j++) begin
 
-                addr_a <= ((`TAG_SA<<17) + (i<<11) + j)<<2;;
+                addr_a <= ((`TAG_SA<<17) + j)<<2;;
                 wrdata_a <= img[j];
                 we_a                 <= 4'hf;
                 @(posedge clk);
                we_a                 <= 4'h0;
-               
             end
         end
 
@@ -112,7 +111,7 @@ module tb_TOP_wrapped();
         
         for(int i = 0; i<6; i++) begin
             for(int j=0; j<25; j++) begin
-                addr_a <= ((`TAG_SA<<17) + (1<<16) + (i<<6) + j)<<2;
+                addr_a <= ((`TAG_SA<<17) + (1<<16) + (i<<8) + j)<<2;
                 wrdata_a <= filter[i][24-j];
                 we_a                <= 4'hf;;
                 @(posedge clk);
@@ -144,6 +143,7 @@ module tb_TOP_wrapped();
                 end
             end
         end
+        
 
         repeat (3) @(posedge clk);
         $finish;

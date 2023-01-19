@@ -14,15 +14,16 @@ module ACC_ACTIVE(
     input wire  [5:0]                   ifmap_ch_i,
 
     input wire                          start_fc_i,
-    input wire  [6:0]                   in_node_num_i,
+    input wire  [8:0]                   in_node_num_i,
     input wire  [6:0]                   out_node_num_i,
+    input wire  [1:0]                   nth_fully_i,
 
     input wire                          wbuf_wren_i,
     input wire  [16:0]                  wbuf_wrptr_i,
     input wire  [7:0]                   wbuf_wdata_i,
 
     input wire                          ifmap_wren_i,
-    input wire  [6:0]                   ifmap_wrptr_i,
+    input wire  [9:0]                   ifmap_wrptr_i,
     input wire  [7:0]                   ifmap_wdata_i,
 
     output wire                          act_last_o [`ACC_NUM  + `FA_NUM],
@@ -56,22 +57,40 @@ module ACC_ACTIVE(
         .addr_o(conv_addr)
     );
 
-    FullyConnected u_fc (
+    // FullyConnected u_fc (
+    //     .clk(clk),
+    //     .rst_n(rst_n),
+    //     .start_i(start_fc_i), 
+    //     .in_node_num_i(in_node_num_i), 
+    //     .out_node_num_i(out_node_num_i), 
+    //     .wbuf_wren_i(wbuf_wren_i),
+    //     .wbuf_wrptr_i(wbuf_wrptr_i),
+    //     .wbuf_wdata_i(wbuf_wdata_i),
+    //     .ifmap_wren_i(ifmap_wren_i),
+    //     .ifmap_wrptr_i(ifmap_wrptr_i),
+    //     .ifmap_wdata_i(ifmap_wdata_i),
+    //     .psum_o(psum_fc), 
+    //     .valid_o(valid_fc), 
+    //     .last_o(last_fc)  
+    // );
+
+    FC_TOP u_fc (
         .clk(clk),
         .rst_n(rst_n),
         .start_i(start_fc_i), 
         .in_node_num_i(in_node_num_i), 
         .out_node_num_i(out_node_num_i), 
+        .nth_fully_i(nth_fully_i),
         .wbuf_wren_i(wbuf_wren_i),
         .wbuf_wrptr_i(wbuf_wrptr_i),
         .wbuf_wdata_i(wbuf_wdata_i),
         .ifmap_wren_i(ifmap_wren_i),
         .ifmap_wrptr_i(ifmap_wrptr_i),
         .ifmap_wdata_i(ifmap_wdata_i),
-        .psum_o(psum_fc), 
-        .valid_o(valid_fc), 
-        .last_o(last_fc)  
-    );
+        .fc_result_o(psum_fc),
+        .fc_valid_o(valid_fc),
+        .fc_last_o(last_fc)  
+);
 
     Activation_x17 #( .ACC_NUM(`ACC_NUM), .FA_NUM(`FA_NUM), .ADDRESS_WIDTH(`ADDRESS_WIDTH), .DATA_WIDTH(`DATA_WIDTH)) 
         u_active (
