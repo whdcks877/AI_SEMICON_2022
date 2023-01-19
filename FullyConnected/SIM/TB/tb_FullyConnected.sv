@@ -112,35 +112,34 @@ module tb_FullyConnected();
                 weight[i][j] = $urandom_range(6,0)-3; //setting range of random number (-3~3)
             end
         end
-/*
-        for (int i=0; i<120; i++) begin
-            for (int j=0; j<400; j++) begin
-                weight[i][j] = $urandom_range(2,0)-1; //setting range of random number (-3~3)
-            end
-        end
 
-        for(int i=0; i<120; i++) begin
-            for(int j=0; j<120; j++) begin
-                weight_tiled[i][j] = weight[i][j];
-            end
-        end
+        // for (int i=0; i<120; i++) begin
+        //     for (int j=0; j<400; j++) begin
+        //         weight[i][j] = $urandom_range(2,0)-1; //setting range of random number (-3~3)
+        //     end
+        // end
 
-        for(int i=0; i<120; i++) begin
-            for(int j=0; j<120; j++) begin
-                weight_tiled[i+120][j] = weight[i][120+j];
-            end
-        end
-        for(int i=0; i<120; i++) begin
-            for(int j=0; j<120; j++) begin
-                weight_tiled[i+240][j] = weight[i][j+240];
-            end
-        end
-        for(int i=0; i<120; i++) begin
-            for(int j=0; j<120; j++) begin
-                weight_tiled[i+360][j] = weight[i][j+360];
-            end
-        end
-        */
+        // for(int i=0; i<120; i++) begin
+        //     for(int j=0; j<120; j++) begin
+        //         weight_tiled[i][j] = weight[i][j];
+        //     end
+        // end
+
+        // for(int i=0; i<120; i++) begin
+        //     for(int j=0; j<120; j++) begin
+        //         weight_tiled[i+120][j] = weight[i][120+j];
+        //     end
+        // end
+        // for(int i=0; i<120; i++) begin
+        //     for(int j=0; j<120; j++) begin
+        //         weight_tiled[i+240][j] = weight[i][j+240];
+        //     end
+        // end
+        // for(int i=0; i<120; i++) begin
+        //     for(int j=0; j<120; j++) begin
+        //         weight_tiled[i+360][j] = weight[i][j+360];
+        //     end
+        // end
 
 
 
@@ -150,26 +149,26 @@ module tb_FullyConnected();
             end
         end
 
-        /*
-        for(int i =0; i<120; i++) begin
-            for(int j = 0; j<120; j++) begin
-                output_node_ans[i] = output_node_ans[i] + (weight_tiled[i][j] * input_node[280+j]);
-                output_node_ans[i+120] = output_node_ans[i+120] + (weight_tiled[i+120][j] * input_node[160+j]);
-                output_node_ans[i+240] = output_node_ans[i+240] + (weight_tiled[i+240][j] * input_node[40+j]);
-            end
-        end
+        
+        // for(int i =0; i<120; i++) begin
+        //     for(int j = 0; j<120; j++) begin
+        //         output_node_ans[i] = output_node_ans[i] + (weight_tiled[i][j] * input_node[280+j]);
+        //         output_node_ans[i+120] = output_node_ans[i+120] + (weight_tiled[i+120][j] * input_node[160+j]);
+        //         output_node_ans[i+240] = output_node_ans[i+240] + (weight_tiled[i+240][j] * input_node[40+j]);
+        //     end
+        // end
 
-        for(int i =0; i<120; i++) begin
-            for(int j = 0; j<40; j++) begin
-                output_node_ans[i+360] = output_node_ans[i+360] + (weight_tiled[i+360][j] * input_node[j]);
-            end
-        end*/
-        /*
-        for(int i =0; i<120; i++) begin
-            for(int j = 0; j<400; j++) begin
-                output_node_ans[i] = output_node_ans[i] + (weight[i][j] * input_node[j]);
-            end
-        end*/
+        // for(int i =0; i<120; i++) begin
+        //     for(int j = 0; j<40; j++) begin
+        //         output_node_ans[i+360] = output_node_ans[i+360] + (weight_tiled[i+360][j] * input_node[j]);
+        //     end
+        // end
+        
+        // for(int i =0; i<120; i++) begin
+        //     for(int j = 0; j<400; j++) begin
+        //         output_node_ans[i] = output_node_ans[i] + (weight[i][j] * input_node[j]);
+        //     end
+        // end
 
         for(int i =0; i<120; i++) begin
             if(output_node_ans[i]> 127) begin
@@ -187,14 +186,14 @@ module tb_FullyConnected();
     task buffer_load();
         $display("buffer load start");
         //weight_buffer write
-        /*
-        for (int i=0; i<120; i++) begin
-            for (int j=0; j<out_node_num*4; j++) begin
-                addr = (i<<10) + j;
-                wbuf_if.write_ram(addr, weight_tiled[j][i]);
-            end
-        end
-        */
+        
+        // for (int i=0; i<120; i++) begin
+        //     for (int j=0; j<out_node_num*4; j++) begin
+        //         addr = (i<<10) + j;
+        //         wbuf_if.write_ram(addr, weight_tiled[j][i]);
+        //     end
+        // end
+        
         
         for(int i=0; i<84; i++) begin
             for(int j = 0; j<120; j++) begin
@@ -205,24 +204,24 @@ module tb_FullyConnected();
         
 
         //ifmap buffer write
-        /*
-        for(int i = 0; i< 120; i++) begin
-            ifmap_wrptr = i;
-            ifbuf_if.write_ram(ifmap_wrptr,input_node[120 - 1- i]);
-        end
-        for(int i = 0; i< 120; i++) begin
-            ifmap_wrptr = i+120;
-            ifbuf_if.write_ram(ifmap_wrptr,input_node[240 - 1- i]);
-        end
-        for(int i = 0; i< 120; i++) begin
-            ifmap_wrptr = i+240;
-            ifbuf_if.write_ram(ifmap_wrptr,input_node[360 - 1- i]);
-        end
-        for(int i = 0; i< 40; i++) begin
-            ifmap_wrptr = i+360;
-            ifbuf_if.write_ram(ifmap_wrptr,input_node[400 - 1- i]);
-        end
-        */
+        
+        // for(int i = 0; i< 120; i++) begin
+        //     ifmap_wrptr = i;
+        //     ifbuf_if.write_ram(ifmap_wrptr,input_node[120 - 1- i]);
+        // end
+        // for(int i = 0; i< 120; i++) begin
+        //     ifmap_wrptr = i+120;
+        //     ifbuf_if.write_ram(ifmap_wrptr,input_node[240 - 1- i]);
+        // end
+        // for(int i = 0; i< 120; i++) begin
+        //     ifmap_wrptr = i+240;
+        //     ifbuf_if.write_ram(ifmap_wrptr,input_node[360 - 1- i]);
+        // end
+        // for(int i = 0; i< 40; i++) begin
+        //     ifmap_wrptr = i+360;
+        //     ifbuf_if.write_ram(ifmap_wrptr,input_node[400 - 1- i]);
+        // end
+        
 
         for (int i=0; i<in_node_num; i++) begin
             ifmap_wrptr = i + 400;

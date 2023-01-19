@@ -38,7 +38,7 @@ module fc_accumulator(
     reg [31:0]  adder_o;
 
     reg [31:0]  sign_extended; //8bit input -> 32bit
-    reg         rden_acc, wren_acc;
+    reg         rden_acc, wren_acc, wren_acc_n;
     reg         conv_valid;
     reg [7:0]   truncated_data;
     reg         last;
@@ -107,21 +107,24 @@ module fc_accumulator(
                     ps_cnt_n = ps_cnt + 1;
 
                     //capture convolution layer information
+                    rden_acc = 1'b1;
                     out_node_num_n = out_node_num_i-1;
                     tile_num_n = tile_num_i-1;
                 end
             end
             S_ACC: begin
-                rden_acc = 1'b1;
-                wrptr_n = rdptr;
+                
+                
 
-                if(pvalid_i || pvalid_d) begin
+                if(pvalid_i) begin
+                    rden_acc = 1'b1;
                     rdptr_n = rdptr + 1;
                 end
 
                 if(pvalid_d) begin
                     //read sram and write back after addition
                     wren_acc = 1'b1;
+                    wrptr_n = rdptr;
 
                     if(ps_cnt == out_node_num) begin
                         ps_cnt_n = 'b0;
