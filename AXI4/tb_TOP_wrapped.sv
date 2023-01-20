@@ -1,3 +1,4 @@
+`timescale 1ns/1ps
 `define     CH_SIZE         1      //setting input channel size
 `define     OFMAP_SIZE      28*28     //setting ouput feature map size
 `define     OFMAP_SIZE_SQRT 28
@@ -44,9 +45,17 @@ module tb_TOP_wrapped();
                                 '{62, 57, 59, 29, 124, 126, 106, 119, 125, 124, 102, 51, 105, 109, 0, 12, 0, 78, 108, 33, 110, 95, 110, 127, 96, 96, 54, 114, 121, 124, 113, 121, 60, 0, 0, 107, 119, 82, 78, 0, 59, 107, 94, 101, 74, 106, 62, 81, 53, 100, 6, 86, 76, 69, 87, 96, 121, 65, 108, 80, 102, 49, 79, 90, 76, 119, 61, 108, 35, 67, 69, 11, 61, 29, 37, 52, 92, 120, 0, 121, 0, 79, 112, 105, 72, 101, 124, 89, 1, 105, 97, 106, 86, 73, 104, 12, 118, 22, 103, 124, 37, 113, 89, 2, 16, 71, 19, 82, 54, 115, 117, 83, 115, 97, 0, 0, 52, 102, 122, 85, 111, 51, 69, 8, 65, 0, 126, 59, 89, 26, 73, 111, 110, 73, 111, 110, 83, 0, 17, 32, 64, 55, 50, 13, 33, 127, 101, 74, 72, 11, 65, 60, 122, 80, 94, 57, 106, 127, 46, 125, 105, 89, 73, 26, 125, 125, 11, 122, 103, 15, 110, 112, 26, 68, 82, 118, 80, 59, 112, 108, 0, 0, 66, 87, 80, 97, 56, 44, 49, 118, 92, 106, 124, 88, 79, 91},
                                 '{10, 74, 96, 122, 95, 83, 110, 39, 120, 105, 1, 83, 0, 127, 49, 91, 112, 122, 99, 27, 21, 23, 98, 71, 0, 124, 74, 97, 119, 105, 63, 120, 106, 0, 112, 60, 98, 114, 81, 0, 77, 97, 105, 89, 0, 96, 92, 85, 97, 38, 116, 44, 46, 124, 95, 125, 114, 122, 84, 38, 125, 114, 105, 29, 90, 101, 125, 91, 73, 95, 54, 48, 127, 111, 112, 101, 82, 0, 83, 118, 106, 109, 15, 46, 12, 96, 121, 103, 75, 63, 113, 44, 40, 0, 0, 48, 103, 123, 125, 114, 110, 93, 122, 126, 0, 111, 97, 121, 119, 120, 0, 101, 110, 71, 95, 33, 117, 118, 52, 115, 94, 95, 71, 111, 101, 65, 99, 2, 2, 0, 99, 37, 87, 77, 123, 96, 80, 69, 121, 112, 101, 103, 104, 91, 114, 109, 0, 61, 0, 109, 87, 90, 111, 1, 80, 95, 75, 16, 122, 58, 115, 65, 31, 116, 46, 119, 115, 72, 113, 97, 115, 106, 75, 80, 94, 75, 32, 122, 0, 66, 77, 106, 72, 90, 104, 46, 12, 97, 64, 89, 119, 7, 105, 106, 71, 41}};
     logic [7:0] output_captured [6][196];
-    
+
+    logic [7:0] img2[6][196];
+    logic [7:0] filter2[6][16][25];
+    logic [7:0] output_ref2[16][25];
+    logic [7:0] output_captured2[16][25];
+     
     int in_node_num= 0;
     int out_node_num = 0;
+
+    logic [21:0] addr;
+    logic [7:0] data;
 
 
     top_wrapped u_dut(
@@ -82,67 +91,207 @@ module tb_TOP_wrapped();
             wrdata_a = 'b0;
             en_a = 'b0;
             we_a = 'b0;
-            start                   = 1'b0;
-            nth_conv_i              = 'd0;
-            ofmap_size_i = `OFMAP_SIZE_SQRT;
-            ifmap_ch_i = `CH_SIZE;
+            start                   =  1'b0;
+            nth_conv_i              =  'd0;
+            ofmap_size_i =  `OFMAP_SIZE_SQRT;
+            ifmap_ch_i =  `CH_SIZE;
             
 
-            rst_n                   = 1'b0;
+            rst_n                   =  1'b0;
             repeat (3) @(posedge clk);
             rst_n               = 1'b1;
     endtask
 
-    initial begin
-        test_init();
+    task automatic write_ram(input logic [21:0] addr, input logic [7:0] data);
+        we_a = 4'hf;
+        addr_a = addr;
+        wrdata_a = data;
+        @(posedge clk);
+        we_a = 4'h0;
+    endtask
 
-         for (int i =0; i<25; i++) begin
+    task automatic read_ram(input logic [21:0] addr, output logic [7:0] data);
+
+        en_a = 1'b1;
+        addr_a = addr;
+        @(posedge clk);
+        #1
+        data = rddata_a;
+        en_a = 1'b0;
+    endtask
+
+    task test_conv1();
+        for (int i =0; i<25; i++) begin
             for(int j=0; j<1024; j++) begin
-
-                addr_a <= ((`TAG_SA<<17) + j)<<2;;
-                wrdata_a <= img[j];
-                we_a                 <= 4'hf;
-                @(posedge clk);
-               we_a                 <= 4'h0;
+                addr = ((`TAG_SA<<17) + j)<<2;
+                data =  img[j];
+                write_ram(addr, data);
             end
         end
-
-        wrdata_a                 = 'd0;
         
         for(int i = 0; i<6; i++) begin
             for(int j=0; j<25; j++) begin
-                addr_a <= ((`TAG_SA<<17) + (1<<16) + (i<<8) + j)<<2;
-                wrdata_a <= filter[i][24-j];
-                we_a                <= 4'hf;;
-                @(posedge clk);
-                 we_a                 <= 4'h0;
+                addr = ((`TAG_SA<<17) + (1<<16) + (i<<8) + j)<<2;
+                data = filter[i][24-j];
+                write_ram(addr, data);
+                
             end
         end
-       
-        wrdata_a                 = 'd0;
-        
-        @(posedge clk);
 
-        start                       <= 'd1;
-        nth_conv_i                  <= 'd0;
+        start                       = 'd1;
+        ofmap_size_i                = 28;
+        nth_conv_i                  = 0;
+        ifmap_ch_i                  = 1;
         @(posedge clk);
-        start                       <= 'd0; 
+        start                       = 'd0; 
 
         repeat (100000) @(posedge clk);
-
+         
         for(int i = 0; i<6; i++) begin
             for(int j = 0; j < `OFMAP_SIZE/4; j++ ) begin
-                
-                addr_a = ((`TAG_SA_DATA_BUF<<17)+ (i<<10) + j)<<2;
-                en_a = 1;
-                @(posedge clk);
-                en_a = 0;
-                $display("%d||  %dth : %d,      answer: %d",i,j,rddata_a, output_ref[i][j]);
+                addr = ((`TAG_SA_DATA_BUF<<17)+ (i<<10) + j)<<2;
+                read_ram(addr, data);
+                $display("%d||  %dth : %d,      answer: %d",i,j,data, output_ref[i][j]);
                 if(rddata_a != output_ref[i][j]) begin
                     $display("mismatch!");
                 end
             end
         end
+    endtask
+
+    task test_conv2();
+        int imgfp0;
+        int imgfp1;
+        int imgfp2;
+        int imgfp3;
+        int imgfp4;
+        int imgfp5;
+
+        int filterfp0;
+        int filterfp1;
+        int filterfp2;
+        int filterfp3;
+        int filterfp4;
+        int filterfp5;
+
+        int outputfp;
+
+
+        imgfp0 = $fopen("image0.txt","r");
+        imgfp1 = $fopen("image1.txt","r");
+        imgfp2 = $fopen("image2.txt","r");
+        imgfp3 = $fopen("image3.txt","r");
+        imgfp4 = $fopen("image4.txt","r");
+        imgfp5 = $fopen("image5.txt","r");
+
+        for (int i=0; i<196; i=i+1) begin  
+            $fscanf(imgfp0,"%d", img2[0][i]);
+        end
+        for (int i=0; i<196; i=i+1) begin  
+            $fscanf(imgfp1,"%d", img2[1][i]);
+        end
+        for (int i=0; i<196; i=i+1) begin  
+            $fscanf(imgfp2,"%d", img2[2][i]);
+        end
+        for (int i=0; i<196; i=i+1) begin  
+            $fscanf(imgfp3,"%d", img2[3][i]);
+        end
+        for (int i=0; i<196; i=i+1) begin  
+            $fscanf(imgfp4,"%d", img2[4][i]);
+        end
+        for (int i=0; i<196; i=i+1) begin  
+            $fscanf(imgfp5,"%d", img2[5][i]);
+        end
+
+        $fclose("image0.txt","r");
+        $fclose("image1.txt","r");
+        $fclose("image2.txt","r");
+        $fclose("image3.txt","r");
+        $fclose("image4.txt","r");
+        $fclose("image5.txt","r");
+
+        filterfp0 = $fopen("filter0.txt","r");
+        filterfp1 = $fopen("filter1.txt","r");
+        filterfp2 = $fopen("filter2.txt","r");
+        filterfp3 = $fopen("filter3.txt","r");
+        filterfp4 = $fopen("filter4.txt","r");
+        filterfp5 = $fopen("filter5.txt","r");
+
+        for(int i =0; i< 16; i++) begin
+            $fscanf(filterfp0,"%d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d", 
+            filter2[0][i][0], filter2[0][i][1], filter2[0][i][2], filter2[0][i][3], filter2[0][i][4], filter2[0][i][5], filter2[0][i][6], filter2[0][i][7], filter2[0][i][8], filter2[0][i][9], filter2[0][i][10], filter2[0][i][11], filter2[0][i][12], filter2[0][i][13], filter2[0][i][14], filter2[0][i][15], filter2[0][i][16], filter2[0][i][17], filter2[0][i][18], filter2[0][i][19], filter2[0][i][20], filter2[0][i][21], filter2[0][i][22], filter2[0][i][23], filter2[0][i][24]);
+            $fscanf(filterfp1,"%d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d", 
+            filter2[1][i][0], filter2[1][i][1], filter2[1][i][2], filter2[1][i][3], filter2[1][i][4], filter2[1][i][5], filter2[1][i][6], filter2[1][i][7], filter2[1][i][8], filter2[1][i][9], filter2[1][i][10], filter2[1][i][11], filter2[1][i][12], filter2[1][i][13], filter2[1][i][14], filter2[1][i][15], filter2[1][i][16], filter2[1][i][17], filter2[1][i][18], filter2[1][i][19], filter2[1][i][20], filter2[1][i][21], filter2[1][i][22], filter2[1][i][23], filter2[1][i][24]);
+            $fscanf(filterfp2,"%d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d", 
+            filter2[2][i][0], filter2[2][i][1], filter2[2][i][2], filter2[2][i][3], filter2[2][i][4], filter2[2][i][5], filter2[2][i][6], filter2[2][i][7], filter2[2][i][8], filter2[2][i][9], filter2[2][i][10], filter2[2][i][11], filter2[2][i][12], filter2[2][i][13], filter2[2][i][14], filter2[2][i][15], filter2[2][i][16], filter2[2][i][17], filter2[2][i][18], filter2[2][i][19], filter2[2][i][20], filter2[2][i][21], filter2[2][i][22], filter2[2][i][23], filter2[2][i][24]);
+            $fscanf(filterfp3,"%d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d", 
+            filter2[3][i][0], filter2[3][i][1], filter2[3][i][2], filter2[3][i][3], filter2[3][i][4], filter2[3][i][5], filter2[3][i][6], filter2[3][i][7], filter2[3][i][8], filter2[3][i][9], filter2[3][i][10], filter2[3][i][11], filter2[3][i][12], filter2[3][i][13], filter2[3][i][14], filter2[3][i][15], filter2[3][i][16], filter2[3][i][17], filter2[3][i][18], filter2[3][i][19], filter2[3][i][20], filter2[3][i][21], filter2[3][i][22], filter2[3][i][23], filter2[3][i][24]);
+            $fscanf(filterfp4,"%d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d", 
+            filter2[4][i][0], filter2[4][i][1], filter2[4][i][2], filter2[4][i][3], filter2[4][i][4], filter2[4][i][5], filter2[4][i][6], filter2[4][i][7], filter2[4][i][8], filter2[4][i][9], filter2[4][i][10], filter2[4][i][11], filter2[4][i][12], filter2[4][i][13], filter2[4][i][14], filter2[4][i][15], filter2[4][i][16], filter2[4][i][17], filter2[4][i][18], filter2[4][i][19], filter2[4][i][20], filter2[4][i][21], filter2[4][i][22], filter2[4][i][23], filter2[4][i][24]);
+            $fscanf(filterfp5,"%d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d", 
+            filter2[5][i][0], filter2[5][i][1], filter2[5][i][2], filter2[5][i][3], filter2[5][i][4], filter2[5][i][5], filter2[5][i][6], filter2[5][i][7], filter2[5][i][8], filter2[5][i][9], filter2[5][i][10], filter2[5][i][11], filter2[5][i][12], filter2[5][i][13], filter2[5][i][14], filter2[5][i][15], filter2[5][i][16], filter2[5][i][17], filter2[5][i][18], filter2[5][i][19], filter2[5][i][20], filter2[5][i][21], filter2[5][i][22], filter2[5][i][23], filter2[5][i][24]);
+        end
+
+        $fclose("filter0.txt");
+        $fclose("filter1.txt");
+        $fclose("filter2.txt");
+        $fclose("filter3.txt");
+        $fclose("filter4.txt");
+        $fclose("filter5.txt");
+
+        outputfp = $fopen("final_result.txt","r");
+        for(int i =0; i<16; i++) begin
+            $fscanf(outputfp,"%d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d , %d", 
+            output_ref2[i][0], output_ref2[i][1], output_ref2[i][2], output_ref2[i][3], output_ref2[i][4], output_ref2[i][5], output_ref2[i][6], output_ref2[i][7], output_ref2[i][8], output_ref2[i][9], output_ref2[i][10], output_ref2[i][11], output_ref2[i][12], output_ref2[i][13], output_ref2[i][14], output_ref2[i][15], output_ref2[i][16], output_ref2[i][17], output_ref2[i][18], output_ref2[i][19], output_ref2[i][20], output_ref2[i][21], output_ref2[i][22], output_ref2[i][23], output_ref2[i][24]);
+        end
+
+        $fclose("final_result.txt");
+
+        for (int i=0; i<6; i++) begin
+            for(int j=0; j<196; j++) begin
+                addr = ((`TAG_SA<<17) + i*196 + j)<<2;
+                data =  img2[i][j];
+                write_ram(addr, data);
+            end
+        end
+
+        for(int i = 0; i<6; i++) begin
+            for(int j=0; j<16; j++) begin
+                for(int k=0; k<25; k++) begin
+                    addr = ((`TAG_SA<<17) + (1<<16) + (j<<8) + k + 25*(i+1))<<2;
+                    data = filter2[i][j][24-k];
+                    write_ram(addr, data);
+                end
+            end
+        end
+
+        start                       = 'd1;
+        ofmap_size_i                = 10;
+        nth_conv_i                  = 1;
+        ifmap_ch_i                  = 6;
+        @(posedge clk);
+        start                       = 'd0; 
+
+        repeat (100000) @(posedge clk);
+
+        for(int i = 0; i<16; i++) begin
+            for(int j = 0; j < 25; j++) begin
+                addr = ((`TAG_SA_DATA_BUF<<17)+ (i<<10) + j)<<2;
+                read_ram(addr, data);
+                $display("%d||  %dth : %d,      answer: %d",i,j,data, output_ref2[i][j]);
+                if(rddata_a != output_ref2[i][j]) begin
+                    $display("mismatch!");
+                end
+            end
+        end
+    endtask
+
+
+    initial begin
+        test_init();
+        @(posedge clk);
+        test_conv1();
+
         
 
         repeat (3) @(posedge clk);

@@ -31,6 +31,7 @@ module WT_TOP #(
     wire            [DATA_WIDTH-1:0] w_addr[BAND_WT_WIDTH-1:0];
     wire            [DATA_WIDTH-1:0] w_data_1[BAND_WT_WIDTH-1:0];
     wire            [DATA_WIDTH-1:0] w_data_2[BAND_WT_WIDTH-1:0];
+    wire            [3:0] cnt2;
 
 
     SA_ctrl u_sa_ctrl(
@@ -42,7 +43,8 @@ module WT_TOP #(
         .conv_done_i(conv_done_i),
         .data_enable_o(data_enable_o),
         .weight_start_o(weight_start),
-        .weight_stop_o(weight_stop)
+        .weight_stop_o(weight_stop),
+        .cnt2_o(cnt2)
     );
     
     SA u_sa(
@@ -68,7 +70,8 @@ module WT_TOP #(
         .conv_done_i(conv_done_i),
         .w_enable_o(w_enable),
         .w_addr_o(w_addr),
-        .w_data_o(w_data_2)
+        .w_data_o(w_data_2),
+        .cnt2(cnt2)
     );
     //MSB 4bit => column, LSB 8bit => row
     weight_bram u_weight_bram(

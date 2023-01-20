@@ -6502,6 +6502,13 @@ module SA
             end
         end
     end
+    reg burst_last_d;
+    always_ff @(posedge clk) begin
+        if(!rst_n)
+            burst_last_d <= 1'b0;
+        else
+            burst_last_d <= burst_last_i;  
+    end
 
     always_comb begin
         cnt_n = cnt;
@@ -6513,11 +6520,12 @@ module SA
             if(cnt == 'd24) begin
                 accu_valid_n = 1'b1;
             end
-            if(burst_last_i) begin
+            end
+            if(burst_last_d) begin
                 accu_valid_n = 1'b0;
                 cnt_n = 'd0;
             end
-        end
+        
     end
 
 

@@ -1,5 +1,6 @@
 //version 2022-01-19
 //editor IM SUHYEOK
+//edited SM PARK as of 20220120
 
 module weight_buffer#(
     parameter       BAND_WIDTH      = 16,          
@@ -14,22 +15,24 @@ module weight_buffer#(
     input   wire                weight_start_i,                          //SActrl-Weight_buffer interface
     input   wire                [DATA_WIDTH-1:0] w_data_i[BAND_WIDTH-1:0],   //BRAM-Weight_buffer interface
     input   wire                conv_done_i,
+    input   wire                [3:0] cnt2,
+
     output  wire                [ADDR_WIDTH-1:0] w_addr_o[BAND_WIDTH-1:0],   //BRAM-Weight_buffer interface
     output  wire                w_enable_o[BAND_WIDTH-1:0],                  //BRAM-Weight_buffer interface
     output  wire                [DATA_WIDTH-1:0] w_data_o[BAND_WIDTH-1:0]    //Weight_buffer-SA interface
 );
 
 
-    localparam      S_IDLE          = 2'd0,
-                    S_1th_Conv      = 2'd1,
-                    S_2nd_Conv      = 2'd2,
-                    S_2nd_Stop      = 2'd3;
+    localparam      S_IDLE          = 3'd0,
+                    S_1th_Conv      = 3'd1,
+                    S_2nd_Conv      = 3'd2,
+                    S_2nd_Stop      = 3'd3,
+                    S_2nd_WAIT      = 3'd4;
 
 
 
     reg                         [1:0] state, state_n;
     reg                         [4:0] cnt, cnt_n;
-    reg                         [3:0] cnt2;
     reg                         [ADDR_WIDTH-1:0] w_addr[BAND_WIDTH-1:0];
     reg                         w_enable[BAND_WIDTH-1:0];
     reg                         [DATA_WIDTH-1:0] w_data[BAND_WIDTH-1:0];
@@ -55,7 +58,6 @@ module weight_buffer#(
         cnt_n   = cnt;
         case(state)
             S_IDLE: begin
-                cnt2    = 'd1;
                 for (int i=0; i<BAND_WIDTH; i++) begin
                     w_enable[i] = 'd0;
                 end
@@ -89,30 +91,15 @@ module weight_buffer#(
             S_2nd_Conv: begin
                 cnt_n = cnt + 'd1;
                 if(cnt == 'd25) begin
-                    state_n = S_2nd_Stop;
-                end
-                else begin
-                for (int i=0; i<BAND_WIDTH; i++) begin
-                    w_addr[i] <= cnt + ('d25 * cnt2);
-                    w_enable[i] <= 1'b1;
-                end
-                end
-            end
-            S_2nd_Stop: begin
-                cnt_n = 'd0;
-                for (int i=0; i<BAND_WIDTH; i++) begin
-                    w_enable[i] <= 1'b0;
-                end
-                if(!conv_done_i) begin
-                    if(burst_last_i) begin
-                        state_n = S_2nd_Conv;
-                        cnt2 = cnt2 + 'd1;
-                    end
-                end
-                else begin
                     state_n = S_IDLE;
                 end
-            end
+                else begin
+                    for (int i=0; i<BAND_WIDTH; i++) begin
+                        w_addr[i] <= cnt + ('d25 * cnt2);
+                        w_enable[i] <= 1'b1;
+                    end
+                end
+            end   
         endcase
     end
 
