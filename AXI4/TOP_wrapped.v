@@ -53,7 +53,7 @@ module top_wrapped(
     wire                          pool_address_rden;
     wire  [13:0]                  pool_address_rdptr;
 
-    wire  [16:0]                    pool_last;
+    wire  [15:0]                    pool_last;
     wire                            act_last;                  
 
     TOP u_top(
@@ -87,7 +87,7 @@ module top_wrapped(
         .act_last_o(act_last)
     );
 
-    addr_decoder u_dut(
+    addr_decoder u_decoder(
         .addr_a(addr_a),
         .wrdata_a(wrdata_a),
         .rddata_a(rddata_a),
