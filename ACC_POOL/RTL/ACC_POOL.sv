@@ -1,4 +1,3 @@
-
 `define ACC_NUM              16
 `define POOL_NUM             16
 `define FA_NUM               1

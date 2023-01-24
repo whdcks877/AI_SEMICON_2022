@@ -8,7 +8,7 @@ module ACC_ACTIVE(
     input wire                          clk,
     input wire                          rst_n,
 
-    input wire  [7:0]                   psum_i [16],
+    input wire  [15:0]                   psum_i [16],
     input wire                          pvalid_i [16],
     input wire  [4:0]                   ofmap_size_i,
     input wire  [5:0]                   ifmap_ch_i,

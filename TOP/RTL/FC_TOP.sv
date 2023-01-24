@@ -27,7 +27,9 @@ module FC_TOP(
 
 
 
-    wire [7:0]  psum_dir, psum_acc;
+    wire [7:0]  psum_acc;
+    wire [15:0] psum_dir;
+    reg  [7:0] psum_dir_truncted;
     wire        valid_dir, valid_acc;
     wire        last_dir, last_acc;
 
@@ -70,8 +72,22 @@ fc_accumulator u_fc_acc(
     .last_o(last_acc),
     .fc_result_o(psum_acc)
 );
+    always_comb begin
+        if(psum_dir[15] == 1'b0) begin
+            if(|psum_dir[15:7] == 1'b1)
+                psum_dir_truncted = 8'b01111111;
+           else
+                psum_dir_truncted = psum_dir[7:0];
+            
+        end else begin
+            if(&psum_dir[15:7] == 1'b0)
+                psum_dir_truncted = 8'b10000000;
+            else
+                psum_dir_truncted = psum_dir[7:0];
+        end
+    end
 
-    assign fc_result_o = (nth_fully == 0) ? psum_acc : psum_dir;
+    assign fc_result_o = (nth_fully == 0) ? psum_acc : psum_dir_truncted;
     assign fc_valid_o = (nth_fully == 0) ? valid_acc : valid_dir;
     assign fc_last_o = (nth_fully == 0) ? last_acc : last_dir;
 endmodule

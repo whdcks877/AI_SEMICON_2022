@@ -51,8 +51,8 @@ module TOP(
     reg start_sa;
     reg start_fc;
 
-    wire [7:0]  psum_sa [15:0];
-    wire [7:0]  psum_fc [16];
+    wire [15:0]  psum_sa [15:0];
+    wire [15:0]  psum_fc [16];
 
     wire sa_valid [15:0];
     wire fc_valid [16];

@@ -5,7 +5,7 @@ module Accumulator(
     input wire rst_n,
 
     //interface with one colum of systolic array
-    input wire [7:0] psum_i, //output of last row of pe
+    input wire [15:0] psum_i, //output of last row of pe
     input wire pvalid_i, 
     output wire pready_o, 
 
@@ -30,7 +30,7 @@ module Accumulator(
 
     wire [9:0]  pool1, pool2, pool3, pool4; 
 
-    reg [7:0]   psum;
+    reg [15:0]   psum;
     reg [2:0]   state, state_n;
     reg [4:0]   ps_cnt, ps_cnt_n,ps_cnt2, ps_cnt2_n; //counter for partial sum
     reg [5:0]   ch_cnt, ch_cnt_n, ch_cnt_d; //counter for channel
@@ -235,7 +235,7 @@ module Accumulator(
             adder_i = acc_ram_o;
         end
         
-        sign_extended = {{24{psum[7]}},psum[7:0]};
+        sign_extended = {{16{psum[15]}},psum[15:0]};
         adder_o = sign_extended + adder_i;
     end
 

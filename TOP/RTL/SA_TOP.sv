@@ -17,7 +17,7 @@ module SA_TOP
     input   wire    [7:0]   dia,
 
     //ACC interface
-    output  reg     [7:0]   accu_data_o[15:0],
+    output  reg     [15:0]   accu_data_o[15:0],
     output  reg             accu_valid_o[15:0]
 );
 

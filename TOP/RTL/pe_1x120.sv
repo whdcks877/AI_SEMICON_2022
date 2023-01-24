@@ -10,11 +10,11 @@ module pe_1x120(
     input wire          pe_load_i,
     input wire [7:0]    ifmap_i,
 
-    output wire [7:0]   psum_o,
+    output wire [15:0]   psum_o,
     output wire [7:0]   ifmap_o
 );
     
-    wire [7:0] psum [`FC_SIZE+1];
+    wire [15:0] psum [`FC_SIZE+1];
     wire [7:0] ifmap [`FC_SIZE+1];
 
     reg pe_load_d;
@@ -23,7 +23,7 @@ module pe_1x120(
         pe_load_d <= pe_load_i;
     end
 
-    assign psum[0] = 8'b0;
+    assign psum[0] = 16'b0;
     assign ifmap[0] = ifmap_i;
     assign psum_o = psum[`FC_SIZE];
     assign ifmap_o = ifmap[`FC_SIZE];

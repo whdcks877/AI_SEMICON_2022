@@ -5,7 +5,7 @@ module Accumulator_x16(
     input rst_n,
 
     //interface with Systolic array
-    input [7:0]     psum_i  [16],
+    input [15:0]     psum_i  [16],
     input           pvalid_i [16],
     output          pready_o [16],
 
@@ -22,7 +22,7 @@ module Accumulator_x16(
 
     localparam N_COL = 16; //setting number of systolic array row
 
-    wire [7:0]  psum [N_COL];
+    wire [15:0]  psum [N_COL];
     wire        pvalid [N_COL];
     wire        pready [N_COL];
     wire        conv_valid [N_COL];

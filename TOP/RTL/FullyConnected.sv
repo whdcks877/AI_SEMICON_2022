@@ -23,7 +23,7 @@ module FullyConnected (
     input wire [7:0]    ifmap_wdata_i,
 
     //interface with activation
-    output wire [7:0]   psum_o, //output node
+    output wire [15:0]   psum_o, //output node
     output wire         valid_o, //output node data is valiad
     output wire         last_o  //last data of output node
 

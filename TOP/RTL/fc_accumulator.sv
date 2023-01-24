@@ -5,7 +5,7 @@ module fc_accumulator(
     input wire rst_n,
 
     //interface with one colum of systolic array
-    input wire [7:0] psum_i, //output of last row of pe
+    input wire [15:0] psum_i, //output of last row of pe
     input wire pvalid_i, 
 
     input wire [6:0] out_node_num_i,
@@ -25,7 +25,7 @@ module fc_accumulator(
 
     wire [31:0] acc_ram_o;
 
-    reg [7:0]   psum;
+    reg [15:0]   psum;
     reg [2:0]   state, state_n;
     reg [6:0]   ps_cnt, ps_cnt_n; //counter for partial sum
     reg [3:0]   ch_cnt, ch_cnt_n, ch_cnt_d; //counter for channel
@@ -184,7 +184,7 @@ module fc_accumulator(
             adder_i = acc_ram_o;
         end
         
-        sign_extended = {{24{psum[7]}},psum[7:0]};
+        sign_extended = {{24{psum[15]}},psum[15:0]};
         adder_o = sign_extended + adder_i;
     end
 

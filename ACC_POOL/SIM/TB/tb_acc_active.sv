@@ -1,11 +1,5 @@
 `timescale 1ns/1ps
 
-`include "..\..\RTL\ACC_POOL.sv"
-`include "..\..\..\Accumulator\SRC\ACC_IF_x16.sv"
-`include "..\..\..\FullyConnected\SIM\TB\fc_w_buf_if.sv"
-`include "..\..\..\FullyConnected\SIM\TB\fc_ifmap_buf_if.sv"
-
-
 
 `define     CH_SIZE         1      //setting input channel size
 `define     OFMAP_SIZE      28*28     //setting ouput feature map size

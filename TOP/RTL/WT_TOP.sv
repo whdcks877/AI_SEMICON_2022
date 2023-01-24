@@ -21,7 +21,7 @@ module WT_TOP #(
     input   wire                        conv_done_i,
 
     output  wire                        data_enable_o,
-    output  wire                        [DATA_WIDTH-1:0] accu_data_o[BAND_WT_WIDTH-1:0],
+    output  wire                        [(2*DATA_WIDTH)-1:0] accu_data_o[BAND_WT_WIDTH-1:0],
     output  wire                        accu_valid_o [BAND_WT_WIDTH-1:0]
 );
 

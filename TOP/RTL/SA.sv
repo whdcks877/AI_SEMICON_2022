@@ -22,12 +22,12 @@ module SA
     input   wire                weight_stop,
     input   wire    [1:0]       nth_conv_i,
     //accumulator interface
-    output  reg     [7:0]       accu_data_o[15:0],
+    output  reg     [15:0]       accu_data_o[15:0],
     output  reg                 accu_valid[15:0]
 );
-    reg     [7:0]      zero = 'd0;
+    reg     [15:0]      zero = 'd0;
     wire    [7:0]      data_o[24:0][15:0];
-    wire    [7:0]      sum_o[24:0][15:0];
+    wire    [15:0]      sum_o[24:0][15:0];
     reg     [7:0]      weight_o[24:0][15:0];
     reg     [4:0]      cnt,     cnt_n;
     reg                accu_valid_n;
