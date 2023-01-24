@@ -146,7 +146,7 @@ module tb_top_dma();
 
     initial begin
         test_init();
-        @(posedge clk);
+	repeat(3) @(posedge clk);
         test_conv();
 
     end
