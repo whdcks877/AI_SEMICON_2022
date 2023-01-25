@@ -98,13 +98,11 @@ module tb_top_dma();
     endtask
 
     task test_conv();
-        for (int i =0; i<25; i++) begin
-            for(int j=0; j<1024; j++) begin
-                addr = ((`TAG_SA<<17) + j)<<2;
-                data =  img[j];
-                write_ram(addr, data);
-            end
-        end
+		for(int j=0; j<1024; j++) begin
+			addr = ((`TAG_SA<<17) + j)<<2;
+			data =  img[j];
+			write_ram(addr, data);
+		end
         
         for(int i = 0; i<16; i++) begin
             for(int j=0; j<25+(25*6); j++) begin
