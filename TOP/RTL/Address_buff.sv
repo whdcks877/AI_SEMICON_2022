@@ -17,7 +17,7 @@ module Address_buff #
 );
 
     wire        [$clog2(BAND_WIDTH)-1:0]   BLOCK_NUMa = addrb[$clog2(SRAM_DEPTH)+$clog2(BAND_WIDTH)-1:$clog2(SRAM_DEPTH)];
-
+    wire        nc;
     genvar  i;
     generate
         for (i=0; i<BAND_WIDTH; i++) begin: channel
@@ -34,8 +34,10 @@ module Address_buff #
                 .addrb                  (addrb[$clog2(SRAM_DEPTH)-1:0]),
 
                 .dia                    (dia[i]),
-                .dob                    (dob)
+                .dob                    (nc)
             );
         end
     endgenerate
+
+    assign dob = 10'b0;
 endmodule

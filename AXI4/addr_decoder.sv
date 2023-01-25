@@ -116,12 +116,12 @@ module addr_decoder(
                 `TAG_FC_DATA_BUF: begin
                     fc_data_rden = 1'b1;
                     fc_data_rdptr = addr[9:0];
-                    rddata = {24'b0,fc_data_rdata_i};
+                    rddata = {{24{fc_data_rdata_i[7]}},fc_data_rdata_i};
                 end
                 `TAG_SA_DATA_BUF: begin
                     sa_data_rden = 1'b1;
                     sa_data_rdptr = addr[13:0];
-                    rddata = {24'b0,sa_data_rdata_i};
+                    rddata = {{24{sa_data_rdata_i[7]}},sa_data_rdata_i};
                 end
             endcase
         end
