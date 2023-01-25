@@ -104,6 +104,8 @@ module tb_top_dma();
 			write_ram(addr, data);
 		end
         
+		repeat (10)@(posedge clk);
+		
         for(int i = 0; i<16; i++) begin
             for(int j=0; j<25+(25*6); j++) begin
                 addr = ((`TAG_SA<<17) + (1<<16) + (i<<8) + j)<<2;
@@ -112,6 +114,8 @@ module tb_top_dma();
                 
             end
         end
+		
+		repeat (10)@(posedge clk);
 
         for(int i = 0; i<128; i++) begin
             for(int j=0; j<1024; j++) begin
@@ -121,6 +125,8 @@ module tb_top_dma();
                 
             end
         end
+		
+		repeat (10)@(posedge clk);
 
         start_i                       = 'd1;
         @(posedge clk);
@@ -144,7 +150,7 @@ module tb_top_dma();
 
     initial begin
         test_init();
-	repeat(3) @(posedge clk);
+		repeat (10)@(posedge clk);
         test_conv();
 
     end
